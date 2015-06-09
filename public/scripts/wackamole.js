@@ -85,7 +85,7 @@ var WackAMoleApp = React.createClass({displayName: "WackAMoleApp",
     var next_round = this.state.round.number + 1;
 
     if (next_round >= this.props.settings.wait_times.length) {
-      this.props.exit(this.state.data);
+      this._exit(this.state.data);
     }
     else {
       var new_state = this.state;
@@ -202,12 +202,30 @@ var WackAMoleApp = React.createClass({displayName: "WackAMoleApp",
       mouse_end: round.mouse_end,
       mouse_misses: round.mouse_misses
     };
-    experiment_data.push(d);
 
+    experiment_data.push(d);
 
     this.setState({
       data: experiment_data
     }, this.startRound);
+  },
+  _exit: function () {
+    var output = {
+      rounds: this.state.data,
+      num_hits: 0,
+      num_misses: 0,
+      score: this.state.data[this.state.data.length - 1].score
+    };
+    var time_to_hit_array = [];
+    output.rounds.forEach(function (round) {
+      output.num_hits   += round.hit ? 1 : 0;
+      output.num_misses += round.mouse_misses.length + (round.hit ? 0 : 1);
+      if (round.hit){
+        time_to_hit_array.push(round.time_end - round.time_start);
+      }
+    });
+    console.log(output);
+    this.props.exit(output);
   }
 });
 

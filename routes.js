@@ -8,9 +8,7 @@ var controllers = require('./controllers');
  */
 module.exports = function (app) {
 
-  app.get('/', function (req, res) {
-    res.render('index', {});
-  });
+  app.get('/', controllers.experiment);
 
   app.get('/stats',
     controllers.experiment_name
