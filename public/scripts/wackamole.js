@@ -214,17 +214,20 @@ var WackAMoleApp = React.createClass({displayName: "WackAMoleApp",
       rounds: this.state.data,
       num_hits: 0,
       num_misses: 0,
-      score: this.state.data[this.state.data.length - 1].score
+      score: this.state.data[this.state.data.length - 1].score,
+      mean_time_to_hit: 0
     };
-    var time_to_hit_array = [];
+    var sum_time_to_hit = 0;
     output.rounds.forEach(function (round) {
       output.num_hits   += round.hit ? 1 : 0;
       output.num_misses += round.mouse_misses.length + (round.hit ? 0 : 1);
       if (round.hit){
-        time_to_hit_array.push(round.time_end - round.time_start);
+        sum_time_to_hit += (round.time_end - round.time_start);
       }
     });
-    console.log(output);
+
+    output.mean_time_to_hit = sum_time_to_hit / output.num_hits;
+
     this.props.exit(output);
   }
 });
