@@ -13,10 +13,12 @@ var Row = React.createClass({
 });
 var StatsView = React.createClass({
   render: function () {
+    var buttonDisabled = this.state.wait > 0;
+    var buttonText = buttonDisabled ? "Continue in " + this.state.wait + " seconds." : "Continue";
     var worker_stats = <Row name="You" data={this.props.stats}/>;
     var comparison_stats = null;
 
-    if (this.state.cstats) {
+    if (Object.getOwnPropertyNames(this.state.cstats).length > 1) {
       comparison_stats = <Row name="Avg." data={this.state.cstats}/>;
     }
     return (
@@ -37,7 +39,7 @@ var StatsView = React.createClass({
             {comparison_stats}
           </tbody>
         </table>
-        <input type="button" className="btn btn-default" defaultValue="Continue" onClick={this.props.callback}/>
+        <input type="button" className="btn btn-default" value={buttonText} disabled={buttonDisabled} onClick={this.props.callback}/>
       </div>
     )
   },
@@ -50,16 +52,26 @@ var StatsView = React.createClass({
       error: function (a, b, c) {
         console.log(a, b, c);
       }
-    })
+    });
+    this._wait();
   },
   getInitialState: function () {
     return {
+      wait: 5,
       cstats: {}
     };
   },
   setComparisonStats: function (cstats) {
     console.log("Wooo!", cstats);
     this.setState({cstats: cstats});
+  },
+  _wait: function () {
+    var state = this.state;
+    if (this.state.wait > 0) {
+      setTimeout(this._wait, state.wait * 800);
+      state.wait = state.wait - 1;
+      this.setState(state);
+    }
   }
 });
 

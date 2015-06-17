@@ -34,6 +34,8 @@ var WackAMoleApp = React.createClass({
       field = (<Field dimensions={this.props.settings.dimensions} row={this.state.round.mole_row} patch={this.state.round.mole_col} hit={this.moleHit} miss={this.moleMiss}/>);
     };
 
+    var button = this.state.round.number >= 0 ? null: <input type="btn" className="btn btn-primary" value="Start!" onClick={this.startRound} disabled={this.state.round.number >= 0}/>
+
     return (
       <div>
         <h2>Wack-A-Mole</h2>
@@ -44,7 +46,7 @@ var WackAMoleApp = React.createClass({
           <li>{DOWN} points for each mole that hides before you wack them!</li>
         </ul>
         <p><b>Score: </b>{this.state.round.score}</p>
-        <input type="btn" className="btn btn-primary" value="Start!" onClick={this.startRound} disabled={this.state.round.number >= 0}/>
+      {button}
       {field}
       </div>
     );
