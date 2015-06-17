@@ -26,8 +26,8 @@ var StatsView = React.createClass({
           <thead>
             <tr>
               <td>Name</td>
-              <td># hits</td>
-              <td># misses</td>
+              <td>&#35; hits</td>
+              <td>&#35; misses</td>
               <td>Score</td>
               <td>Speed</td>
             </tr>
