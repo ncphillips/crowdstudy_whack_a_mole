@@ -33,7 +33,7 @@ module.exports.generate_stats = function (req, res, next) {
   req.stats = {};
   switch (req.experiment.feedback_type) {
     case config.NONE:
-      real_stats(req, res, next);
+      next();
       break;
     case config.REAL:
       real_stats(req, res, next);
