@@ -46,7 +46,7 @@ var StatsView = React.createClass({
       type: 'GET',
       url: '/wack_a_mole/' + this.props.worker._id + '/stats',
       dataType: 'json',
-      success: this.setComparisionStats,
+      success: this.setComparisonStats,
       error: function (a, b, c) {
         console.log(a, b, c);
       }
@@ -58,6 +58,7 @@ var StatsView = React.createClass({
     };
   },
   setComparisonStats: function (cstats) {
+    console.log("Wooo!", cstats);
     this.setState({cstats: cstats});
   }
 });

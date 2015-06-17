@@ -14,7 +14,9 @@ module.exports.hook_worker_registration = function (req, res, next) {
   workers.find({"experiments.wack_a_mole.completed": {$in: [true, 'true']}}, function (err, workers) {
     var feedback_type = 'none';
     var count = 0;
-    if (err) {  }
+    if (err) {
+      console.log(err);
+    }
     else if (workers){
       count = workers.length;
       if (count > 10) {
@@ -29,12 +31,9 @@ module.exports.hook_worker_registration = function (req, res, next) {
 
 module.exports.generate_stats = function (req, res, next) {
   req.stats = {};
-  if (!req.experiment.wack_a_mole || !req.experiment.wack_a_mole.completed) {
-    next();
-  }
-  else switch (req.experiment.wack_a_mole.feedback_type) {
+  switch (req.experiment.feedback_type) {
     case config.NONE:
-      next(); // Done
+      real_stats(req, res, next);
       break;
     case config.REAL:
       real_stats(req, res, next);
@@ -49,24 +48,43 @@ module.exports.generate_stats = function (req, res, next) {
 };
 
 exports.real_stats = real_stats = function (req, res, next) {
-  var stats = {
-    num_hits: 0,
-    num_misses: 0,
-    score: 0,
-    mean_time_to_hit: 0
-  };
-  req.workers.forEach(function (worker, index) {
-    stats.num_hits += worker.experiments.wack_a_mole.data.num_hits;
-    stats.num_misses += worker.experiments.wack_a_mole.data.num_misses;
-    stats.score += worker.experiments.wack_a_mole.data.score;
-    stats.mean_time_to_hit += worker.experiments.wack_a_mole.data.mean_time_to_hit;
+  var workers = req.db.collection('workers');
+  workers.find({"experiments.wack_a_mole.data": {"$exists": true}}).toArray(function (err, workers) {
+    if (err) return next(err);
+    if (!workers) workers = [];
+    var stats = {
+      num_hits: 0,
+      num_misses: 0,
+      score: 0,
+      mean_time_to_hit: 0,
+      source: {
+        num_hits: [],
+        num_misses: [],
+        score: [],
+        mean_time_to_hit: []
+      }
+    };
+    workers.forEach(function (worker, index) {
+      var data =  worker.experiments.wack_a_mole.data;
+      stats.source.num_hits.push(data.num_hits);
+      stats.source.num_misses.push(data.num_misses);
+      stats.source.score.push(data.score);
+      stats.source.mean_time_to_hit.push(data.mean_time_to_hit);
+
+      stats.num_hits += data.num_hits;
+      stats.num_misses += data.num_misses;
+      stats.score += data.score;
+      stats.mean_time_to_hit =  parseFloat(data.mean_time_to_hit);
+    });
+    var count = workers.length || 1;
+    stats.num_hits = stats.num_hits / count;
+    stats.num_misses = stats.num_misses / count;
+    stats.score = stats.score / count;
+    console.log(stats.mean_time_to_hit);
+    stats.mean_time_to_hit = stats.mean_time_to_hit / count;
+    req.stats = stats;
+    next();
   });
-  stats.num_hits = stats / req.workers.length;
-  stats.num_misses = stats / req.workers.length;
-  stats.score = stats / req.workers.length;
-  stats.mean_time_to_hit = stats / req.workers.length;
-  req.stats = stats;
-  next();
 };
 
 exports.fake_stats = fake_stats = function (req, res, next) {
