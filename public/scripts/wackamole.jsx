@@ -1,14 +1,23 @@
 'use strict';
+
+// Components
 var CrowdExperiment = require('CrowdExperiment');
 var Field = require('./components/Field');
-var DIMENSIONS = [3, 3];
+var Stats = require('./components/Stats');
+
+// Scoring Constants
 var HIT = 2;
 var MISS = -1;
-var DOWN = -2
-var WAIT_TIMES = [];
+var DOWN = -2;
 
-for (var i = 1; i <= 10; i++) {
-  WAIT_TIMES.push({low: 4 - ((i/3) - 1), high: 4 - ((i/3) - 1) + (i % 3)});
+// Field Dimensions
+var DIMENSIONS = [3, 3];
+
+// Rounds
+var WAIT_TIMES = [];
+var STATS_INTERVAL = 10;
+for (var i = 1; i <= 50; i++) {
+  WAIT_TIMES.push({low: 1, high: 3});
 }
 
 var getRandomInt = function (min, max) {
@@ -18,7 +27,10 @@ var getRandomInt = function (min, max) {
 var WackAMoleApp = React.createClass({
   render: function () {
     var field = null;
-    if (this.state.round.number >= 0) {
+    if (this.state.round.number > 0 && this.state.round.number % STATS_INTERVAL === 0) {
+      field = (<Stats worker={this.props.worker} stats={this._stats()} callback={this.startRound} />);
+    }
+    else if (this.state.round.number >= 0) {
       field = (<Field dimensions={this.props.settings.dimensions} row={this.state.round.mole_row} patch={this.state.round.mole_col} hit={this.moleHit} miss={this.moleMiss}/>);
     };
 
@@ -76,19 +88,26 @@ var WackAMoleApp = React.createClass({
       }
     }
   },
-
+  componentWillUnmount: function () {
+    if (this.state.round.timeout_id) {
+      clearTimeout(this.state.round.timeout_id);
+    }
+  },
   /**
    * Start Round
    */
   startRound: function () {
-    console.log("startRound");
     var next_round = this.state.round.number + 1;
+    var new_state = this.state;
 
-    if (next_round >= this.props.settings.wait_times.length) {
+    if (next_round > 0 && next_round % STATS_INTERVAL === 0 ){
+      new_state.round.number = next_round;
+      this.setState(new_state);
+    }
+    else if (next_round >= this.props.settings.wait_times.length) {
       this._exit(this.state.data);
     }
     else {
-      var new_state = this.state;
       new_state.round.number = next_round;
       this.setState(new_state, this.moleBurrow);
     }
@@ -98,7 +117,6 @@ var WackAMoleApp = React.createClass({
    * Mole Up
    */
   moleBurrow: function () {
-    console.log("moleBurrow");
     if (this.state.round.timeout_id) {
       clearTimeout(this.state.round.timeout_id);
     }
@@ -107,6 +125,7 @@ var WackAMoleApp = React.createClass({
     var state = this.state;
     state.round.mole_row = 0; // Mole Disapears.
     state.round.mole_col = 0;
+    state.round.mouse_misses = [];
     state.round.timeout_id = setTimeout(this.moleUp, time_interval);
     this.setState(state);
   },
@@ -115,7 +134,6 @@ var WackAMoleApp = React.createClass({
    * Mole UP
    */
   moleUp: function () {
-    console.log("moleUp");
     if (this.state.round.timeout_id) {
       clearTimeout(this.state.round.timeout_id);
     }
@@ -138,7 +156,6 @@ var WackAMoleApp = React.createClass({
    * @param e
    */
   moleMiss: function (e) {
-    console.log("moleMiss");
     var state = this.state;
     var misses = this.state.round.mouse_misses;
     misses.push({x: e.clientX, y: e.clientY, time: e.timeStamp});
@@ -152,7 +169,6 @@ var WackAMoleApp = React.createClass({
    * @param e
    */
   moleHit: function (e) {
-    console.log("moleHit");
     if (this.state.round.timeout_id) {
       clearTimeout(this.state.round.timeout_id);
     }
@@ -169,7 +185,6 @@ var WackAMoleApp = React.createClass({
    * @param hit
    */
   moleDown: function (hit) {
-    console.log("moleDown");
     if (this.state.round.timeout_id) {
       clearTimeout(this.state.round.timeout_id);
     }
@@ -185,7 +200,6 @@ var WackAMoleApp = React.createClass({
    * End Round
    */
   endRound: function () {
-    console.log("endRound");
     var round = this.state.round;
     var experiment_data = this.state.data;
     var d = {
@@ -209,8 +223,8 @@ var WackAMoleApp = React.createClass({
       data: experiment_data
     }, this.startRound);
   },
-  _exit: function () {
-    var output = {
+  _stats: function () {
+    var stats = {
       rounds: this.state.data,
       num_hits: 0,
       num_misses: 0,
@@ -218,15 +232,19 @@ var WackAMoleApp = React.createClass({
       mean_time_to_hit: 0
     };
     var sum_time_to_hit = 0;
-    output.rounds.forEach(function (round) {
-      output.num_hits   += round.hit ? 1 : 0;
-      output.num_misses += round.mouse_misses.length + (round.hit ? 0 : 1);
+    stats.rounds.forEach(function (round) {
+      stats.num_hits   += round.hit ? 1 : 0;
+      stats.num_misses += round.mouse_misses.length + (round.hit ? 0 : 1);
       if (round.hit){
         sum_time_to_hit += (round.time_end - round.time_start);
       }
     });
 
-    output.mean_time_to_hit = sum_time_to_hit / output.num_hits;
+    stats.mean_time_to_hit = sum_time_to_hit / stats.num_hits;
+    return stats;
+  },
+  _exit: function () {
+    var output = this._stats();
 
     this.props.exit(output);
   }

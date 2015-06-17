@@ -1,5 +1,5 @@
 'use strict';
-var worker = require('../../lib/middleware/worker');
+var worker = require('../worker/controllers');
 var controllers = require('./controllers');
 
 /**
@@ -10,12 +10,26 @@ module.exports = function (app) {
 
   app.get('/', controllers.experiment);
 
-  app.get('/stats',
-    controllers.experiment_name
-    // find all workers who have completed this experiment
-    // get all experiment data
-    // generate some stats on the data
-  )
+  app.get('/:id/stats',
+    controllers.experiment_name,
+    worker.getExperiment,
+    controllers.generate_stats,
+    controllers.returnStats
+  );
+
+  app.param('id', function (req, res, next, id) {
+    var ObjectId = require('mongodb').ObjectID;
+    var workers = req.db.collection('workers');
+    workers.find({_id: ObjectId(id)}).toArray(function (err, workers) {
+      if (err) return next(err);
+
+      log.info(workers);
+      if (workers.length < 1) return next(new Error('Failed to load Worker.'));
+
+      req.worker = workers[0];
+      next();
+    });
+  });
 
 };
 
