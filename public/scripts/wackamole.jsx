@@ -1,9 +1,11 @@
 'use strict';
 
 // Components
+var FullscreenButton = require('./components/FullScreenButton');
 var CrowdExperiment = require('CrowdExperiment');
 var Field = require('./components/Field');
 var Stats = require('./components/Stats');
+var Instructions = require('./components/Instructions');
 
 // Scoring Constants
 var HIT = 2;
@@ -17,7 +19,7 @@ var DIMENSIONS = [3, 3];
 var WAIT_TIMES = [];
 var STATS_INTERVAL = 10;
 for (var i = 1; i <= 50; i++) {
-  WAIT_TIMES.push({low: 1, high: 3});
+  WAIT_TIMES.push({low: 0.75, high: 2});
 }
 
 var getRandomInt = function (min, max) {
@@ -26,28 +28,26 @@ var getRandomInt = function (min, max) {
 
 var WackAMoleApp = React.createClass({
   render: function () {
-    var field = null;
+    var display = null;
     if (this.state.round.number > 0 && this.state.round.number % STATS_INTERVAL === 0) {
-      field = (<Stats worker={this.props.worker} stats={this._stats()} callback={this.startRound} />);
+      display = (<Stats worker={this.props.worker} stats={this._stats()} callback={this.startRound} />);
     }
     else if (this.state.round.number >= 0) {
-      field = (<Field dimensions={this.props.settings.dimensions} row={this.state.round.mole_row} patch={this.state.round.mole_col} hit={this.moleHit} miss={this.moleMiss}/>);
-    };
+      display = (<Field dimensions={this.props.settings.dimensions} row={this.state.round.mole_row} patch={this.state.round.mole_col} hit={this.moleHit} miss={this.moleMiss}/>);
+    }
+    else {
+      display = <Instructions rounds={WAIT_TIMES.length} interval={STATS_INTERVAL} hit={HIT} miss={MISS} down={DOWN}/>;
+    }
 
-    var button = this.state.round.number >= 0 ? null: <input type="btn" className="btn btn-primary" value="Start!" onClick={this.startRound} disabled={this.state.round.number >= 0}/>
+    var button = this.state.round.number >= 0 ? null: <input type="btn" className="btn btn-block btn-primary" value="Start!" onClick={this.startRound} disabled={this.state.round.number >= 0}/>
 
     return (
       <div>
         <h2>Wack-A-Mole</h2>
-        <p>You have {this.props.settings.wait_times.length} chances to wack that mole!</p>
-        <ul>
-          <li>{HIT} points for every mole wacked!</li>
-          <li>{MISS} points for each wack that misses!</li>
-          <li>{DOWN} points for each mole that hides before you wack them!</li>
-        </ul>
-        <p><b>Score: </b>{this.state.round.score}</p>
-      {button}
-      {field}
+        <FullscreenButton></FullscreenButton>
+        <h3>Score: {this.state.round.score}</h3>
+        {display}
+        {button}
       </div>
     );
   },
