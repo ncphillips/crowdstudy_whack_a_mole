@@ -6,7 +6,7 @@ var Row = React.createClass({
         <td>{this.props.data.num_hits}</td>
         <td>{this.props.data.num_misses}</td>
         <td>{this.props.data.score}</td>
-        <td>{this.props.data.mean_time_to_hit}</td>
+        <td>{Math.round(this.props.data.mean_time_to_hit) / 1000}</td>
       </tr>
     );
   }
@@ -31,7 +31,7 @@ var StatsView = React.createClass({
               <td>&#35; hits</td>
               <td>&#35; misses</td>
               <td>Score</td>
-              <td>Speed</td>
+              <td>Reaction Time (seconds)</td>
             </tr>
           </thead>
           <tbody>
@@ -57,7 +57,7 @@ var StatsView = React.createClass({
   },
   getInitialState: function () {
     return {
-      wait: 5,
+      wait: 3,
       cstats: {}
     };
   },
