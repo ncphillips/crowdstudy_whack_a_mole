@@ -1,3 +1,5 @@
+var Questions = require('./Questions');
+
 var Row = React.createClass({
   render: function () {
     return (
@@ -13,8 +15,6 @@ var Row = React.createClass({
 });
 var StatsView = React.createClass({
   render: function () {
-    var buttonDisabled = this.state.wait > 0;
-    var buttonText = buttonDisabled ? "Continue in " + this.state.wait + " seconds." : "Continue";
     var worker_stats = <Row name="You" data={this.props.stats}/>;
     var comparison_stats = null;
 
@@ -39,7 +39,7 @@ var StatsView = React.createClass({
             {comparison_stats}
           </tbody>
         </table>
-        <input type="button" className="btn btn-default" value={buttonText} disabled={buttonDisabled} onClick={this.props.callback}/>
+        <Questions callback={this.props.callback}/>
       </div>
     )
   },
@@ -53,26 +53,17 @@ var StatsView = React.createClass({
         console.log(a, b, c);
       }
     });
-    this._wait();
   },
   getInitialState: function () {
     return {
-      wait: 3,
       cstats: {}
     };
   },
   setComparisonStats: function (cstats) {
     console.log("Wooo!", cstats);
     this.setState({cstats: cstats});
-  },
-  _wait: function () {
-    var state = this.state;
-    if (this.state.wait > 0) {
-      setTimeout(this._wait, state.wait * 800);
-      state.wait = state.wait - 1;
-      this.setState(state);
-    }
   }
+
 });
 
 module.exports = StatsView;

@@ -30,7 +30,7 @@ var WackAMoleApp = React.createClass({
   render: function () {
     var display = null;
     if (this.state.round.number > 0 && this.state.round.number % STATS_INTERVAL === 0) {
-      display = (<Stats worker={this.props.worker} stats={this._stats()} callback={this.startRound} />);
+      display = (<Stats worker={this.props.worker} stats={this._stats()} callback={this.saveQuestion} />);
     }
     else if (this.state.round.number >= 0) {
       display = (<Field dimensions={this.props.settings.dimensions} row={this.state.round.mole_row} patch={this.state.round.mole_col} hit={this.moleHit} miss={this.moleMiss}/>);
@@ -73,6 +73,7 @@ var WackAMoleApp = React.createClass({
   },
   getInitialState: function () {
     return {
+      questions: [],
       data: [],
       round: {
         number: -1,
@@ -225,6 +226,12 @@ var WackAMoleApp = React.createClass({
       data: experiment_data
     }, this.startRound);
   },
+  saveQuestion: function (q) {
+    var questions = this.state.questions;
+    questions.push(q);
+
+    this.setState({questions: questions}, this.startRound);
+  },
   _stats: function () {
     var stats = {
       rounds: this.state.data,
@@ -247,6 +254,8 @@ var WackAMoleApp = React.createClass({
   },
   _exit: function () {
     var output = this._stats();
+    output.rounds = this.state.data;
+    output.questions = this.state.questions;
 
     this.props.exit(output);
   }
