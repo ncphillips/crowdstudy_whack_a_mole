@@ -1,3 +1,4 @@
+'use strict';
 var config = {
   /**
    * We want to be able to turn on/off different types of feedback.

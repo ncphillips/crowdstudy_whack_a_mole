@@ -1,21 +1,16 @@
-<html>
-<head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/JSXTransformer.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
+<% include ../../../app/views/head %>
+<div id="wack-a-mole"></div>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"/>
-</head>
-<body>
-<div class="col-md-3"></div>
-<div id="content" class="col-md-6">
-    <div id="wack-a-mole"></div>
-</div>
-<div class="col-md-3"></div>
+<!-- Production Scripts -->
+<!--<script src="/scripts/build/wack_a_mole.js" type="text/javascript"></script>-->
 
-<script src="/scripts/build/wack_a_mole.js" type="text/javascript"></script>
-</body>
-</html>
+<!-- Development Scripts -->
+
+<script src="scripts/components/Field.jsx" type="text/jsx"></script>
+<script src="scripts/components/FullScreenButton.jsx" type="text/jsx"></script>
+<script src="scripts/components/Instructions.jsx" type="text/jsx"></script>
+<script src="scripts/components/Questions.jsx" type="text/jsx"></script>
+<script src="scripts/components/Stats.jsx" type="text/jsx"></script>
+<script src="scripts/wackamole.jsx" type="text/jsx"></script>
+
+<% include ../../../app/views/tail %>

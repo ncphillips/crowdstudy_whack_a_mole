@@ -1,3 +1,4 @@
+'use strict';
 var config = require('./config');
 
 module.exports.experiment = function (req, res) {
@@ -33,7 +34,7 @@ module.exports.generate_stats = function (req, res, next) {
   req.stats = {};
   switch (req.experiment.feedback_type) {
     case config.NONE:
-      next();
+      real_stats(req, res, next);
       break;
     case config.REAL:
       real_stats(req, res, next);
@@ -47,49 +48,58 @@ module.exports.generate_stats = function (req, res, next) {
   }
 };
 
-exports.real_stats = real_stats = function (req, res, next) {
+var real_stats = function (req, res, next) {
   var workers = req.db.collection('workers');
   workers.find({"experiments.wack_a_mole.data": {"$exists": true}}).toArray(function (err, workers) {
-    if (err) return next(err);
-    if (!workers) workers = [];
+    if (err) {
+      return next(err);
+    } else if (!workers) {
+      workers = [];
+    }
+    var nr = req.query.num_rounds;
     var stats = {
-      num_hits: 0,
+      num_hits: 0 ,
       num_misses: 0,
       score: 0,
       mean_time_to_hit: 0,
-      source: {
-        num_hits: [],
-        num_misses: [],
-        score: [],
-        mean_time_to_hit: []
-      }
+      sum_time_to_hit: 0
     };
+    console.log("WORKERS: ", workers.length);
     workers.forEach(function (worker, index) {
-      var data =  worker.experiments.wack_a_mole.data;
-      stats.source.num_hits.push(data.num_hits);
-      stats.source.num_misses.push(data.num_misses);
-      stats.source.score.push(data.score);
-      stats.source.mean_time_to_hit.push(data.mean_time_to_hit);
+      var rounds =   worker.experiments.wack_a_mole.data.rounds;
+      var num = 0;
 
-      stats.num_hits += data.num_hits;
-      stats.num_misses += data.num_misses;
-      stats.score += data.score;
-      stats.mean_time_to_hit =  parseFloat(data.mean_time_to_hit);
+      if (!nr || nr >= rounds.length) {
+        num = rounds.length;
+      }
+      else {
+        num = nr;
+      }
+      var sum_time_to_hit = 0;
+      for(var i=0; i < num; i++){
+        stats.num_hits += rounds[i].hit ? 1: 0;
+        stats.num_misses += rounds[i].hit ? 0: 1;
+        sum_time_to_hit += (rounds[i].hit)? (rounds[i].time_end - rounds[i].time_start):0;
+      }
+      stats.mean_time_to_hit = sum_time_to_hit / num;
     });
+
+
     var count = workers.length || 1;
     stats.num_hits = stats.num_hits / count;
     stats.num_misses = stats.num_misses / count;
-    stats.score = stats.score / count;
-    console.log(stats.mean_time_to_hit);
+    stats.score = stats.num_hits - stats.num_misses;
     stats.mean_time_to_hit = stats.mean_time_to_hit / count;
     req.stats = stats;
     next();
   });
 };
+exports.real_stats = real_stats;
 
-exports.fake_stats = fake_stats = function (req, res, next) {
+var fake_stats = function (req, res, next) {
   next();
 };
+exports.fake_stats = fake_stats;
 
 exports.returnStats = function (req, res) {
   res.json(req.stats);

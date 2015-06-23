@@ -1,81 +1,13 @@
 'use strict';
 
+//var React = require('react');
+
 
 var Mole = React.createClass({
   render: function () {
-    //var img_src = "mole_" + this.state.img + ".png";
     var img_src = "mole_0.png";
     return <img src={img_src} style={{position: "absolute", top: 15, left: 40, width: "120px", height: "120px", "z-index": 2}}/>
   }
-  /**
-   * The following code is comented out because of bugs that were introduced, and not resolved as a result of animating the moles.
-   */
-  //getDefaultProps: function () {
-  //  return {
-  //    was_hit: false
-  //  };
-  //},
-  //getInitialState: function () {
-  //  return {
-  //    img: 0,
-  //    hit_animation_complete: false
-  //  };
-  //},
-  //componentDidMount: function () {
-  //  console.log("Mole mounted");
-  //  this.openEyes();
-  //},
-  //openEyes: function () {
-  //  this.setState({img: 0}, function () {
-  //    if (this.props.was_hit) {
-  //      this.wince();
-  //    }
-  //    else {
-  //      this.setTimeout(this.blink, 800);
-  //    }
-  //  });
-  //},
-  //blink: function () {
-  //  console.log("Blink");
-  //
-  //  var _this = this;
-  //
-  //  one();
-  //
-  //  function one(){
-  //    _this.setState({img: 1}, _this.setTimeout.bind(null, two, 50));
-  //  }
-  //  function two() {
-  //    _this.setState({img: 2}, _this.setTimeout.bind(null, _this.openEyes, 100));
-  //  }
-  //},
-  //wince: function () {
-  //  console.log("Wince");
-  //
-  //  var _this = this;
-  //
-  //  three();
-  //
-  //  function three() {
-  //    _this.setState({img: 3}, _this.setTimeout.bind(_this, four, 100));
-  //  }
-  //  function four() {
-  //    _this.setState({img: 4}, _this.setTimeout.bind(_this, five, 100));
-  //  }
-  //  function five() {
-  //    _this.setState({img: 5}, _this.setTimeout.bind(_this, six, 100));
-  //  }
-  //  function six() {
-  //    // _this.props.callback === Patch.props.hit ===
-  //    _this.setState({img: 6, hit_animation_complete: true}, _this.setTimeout.bind(_this, _this.props.callback, 100));
-  //  }
-  //},
-  //setTimeout: function (callback, time) {
-  //  if (this.state.tid) {
-  //    clearTimeout(this.state.tid);
-  //  }
-  //  this.setState({tid: setTimeout(callback, time)});
-  //}
 });
 
 var Patch = React.createClass({
@@ -90,7 +22,6 @@ var Patch = React.createClass({
     if (this.props.has_mole) {
       //child = <Mole was_hit={this.state.hit} callback={this.props.hit.bind(null, this.state.event)} />;
       //callback = this.clickedyClack;
-
       child = <Mole />;
       callback = this.props.hit;
       className = 'mole-patch';
@@ -161,4 +92,7 @@ var Field = React.createClass({
   }
 });
 
-module.exports = Field;
+if (typeof module !== 'undefined') {
+  module.exports.Field = Field;
+  module.exports.Mole = Mole
+}

@@ -1,3 +1,7 @@
+"use strict";
+
+//var React = require('react');
+
 function toggleFullscreen() {
   if (!document.fullscreenElement &&    // alternative standard method
     !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
@@ -23,21 +27,20 @@ function toggleFullscreen() {
   }
 }
 
-var FullscreenButton = React.createClass({
+var FullScreenButton = React.createClass({
   render: function () {
-    var text = this.state.fullscreen ? "Exit Fullscreen" : "Enter Fullscreen";
+    var text = this.props.fullscreen ? "Exit Full-Screen" : "Please Enter Full-Screen";
     return (
-      <input type="button" className="btn btn-block btn-default" onClick={this._clickFullscreen} value={text}/>
+      <input type="button" className="btn btn-block btn-default" onClick={this._clickFullScreen} value={text}/>
     );
   },
-  getInitialState: function () {
-    return {
-      fullscreen: false
-    };
-  },
-  _clickFullscreen: function (e) {
-    this.setState({fullscreen: !this.state.fullscreen}, toggleFullscreen);
+  _clickFullScreen: function (e) {
+    toggleFullscreen();
   }
 });
 
-module.exports = FullscreenButton;
+
+
+if (typeof module !== 'undefined') {
+  module.exports = FullScreenButton;
+}
