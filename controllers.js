@@ -64,7 +64,6 @@ var real_stats = function (req, res, next) {
       mean_time_to_hit: 0,
       sum_time_to_hit: 0
     };
-    console.log("WORKERS: ", workers.length);
     workers.forEach(function (worker, index) {
       var rounds =   worker.experiments.wack_a_mole.data.rounds;
       var num = 0;

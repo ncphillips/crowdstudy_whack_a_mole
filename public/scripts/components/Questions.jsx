@@ -6,7 +6,7 @@ if (typeof require !== 'undefined') {
   var ExperimentStore = require('ExperimentStore');
 }
 
-var MIN_ANSWER_LENGTH = 3;
+var MIN_ANSWER_LENGTH = 1;
 
 var props = {
   is_first_feedback: true
@@ -100,7 +100,7 @@ var Questions = React.createClass({
       this.props.callback(output);
     }
     else {
-      this.setState({answerError: "Please write a little more."});
+      this.setState({answerError: "Please input an answer."});
     }
   },
   _wait: function () {

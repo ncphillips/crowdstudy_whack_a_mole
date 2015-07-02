@@ -63,12 +63,16 @@ var WackAMoleApp = React.createClass({
 
     return (
       <div>
-        <br/>
-        <FullScreenButton fullscreen={this.state.fullscreen} callback={this.toggleFullScreen}></FullScreenButton>
-        <h2>Wack-A-Mole</h2>
-        <h3>Score: {this.state.round.score}</h3>
+        <div className="col-md-3"></div>
+        <div className="col-md-6">
+          <br/>
+          <FullScreenButton fullscreen={this.state.fullscreen} callback={this.toggleFullScreen}></FullScreenButton>
+          <h2>Wack-A-Mole</h2>
+          <h3>Score: {this.state.round.score}</h3>
         {display}
         {button}
+        </div>
+        <div className="col-md-3"></div>
       </div>
     );
   },
