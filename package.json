@@ -1,0 +1,9 @@
+{
+"name": "crowdstudy_whack_a_mole",
+"version": "1.0.0",
+"main": "app.js",
+"repository": {
+    "type": "git",
+    "url": "http://github.com/ncphillips/crowdstudy_whack_a_mole"
+}
+}
