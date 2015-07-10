@@ -219,7 +219,6 @@ var WackAMoleApp = React.createClass({
     state.round.score = state.round.score + MISS;
     state.round.hit = false;
     state.round.mole_rect = mole.getClientRects()[0];
-    state.round.time_end = e.timeStamp;
     state.round.mouse_end = [e.clientX, e.clientY];
     this.setState(state, this.endRound);
   },
@@ -237,7 +236,6 @@ var WackAMoleApp = React.createClass({
     state.round.score = this.state.round.score + HIT;
     state.round.hit = true;
     state.round.mole_rect = mole.getClientRects()[0];
-    state.round.time_end = e.timeStamp;
     state.round.mouse_end = [e.clientX, e.clientY];
     this.setState(state, this.endRound);
   },
@@ -253,7 +251,6 @@ var WackAMoleApp = React.createClass({
     var state = this.state;
     state.round.score = state.round.score + DOWN;
     state.round.hit = false;
-    state.round.time_end = state.round.time_start + state.round.time_interval;
     state.round.mouse_end = [mouseX, mouseY];
     this.setState(state, this.endRound);
   },
@@ -268,7 +265,7 @@ var WackAMoleApp = React.createClass({
       number: round.number,
       score: round.score,
       hit: round.hit,
-      time_end: round.time_end,
+      time_end: Date.now(),
       time_interval: round.time_interval,
       time_start: round.time_start,
       mole_rect: round.mole_rect,

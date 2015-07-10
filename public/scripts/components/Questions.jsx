@@ -79,7 +79,7 @@ var Questions = React.createClass({
   getInitialState: function () {
     return {
       wait: 5,
-      questions: '',
+      questions: [],
       answerError: '',
       worker: {},
       experiment: {}
