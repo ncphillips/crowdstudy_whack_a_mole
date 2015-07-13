@@ -211,16 +211,10 @@ var WackAMoleApp = React.createClass({
    * @param e
    */
   moleMiss: function (e) {
-    if (this.state.round.timeout_id) {
-      clearTimeout(this.state.round.timeout_id);
-    }
-    var mole = document.getElementsByClassName('mole-patch')[0];
     var state = this.state;
     state.round.score = state.round.score + MISS;
-    state.round.hit = false;
-    state.round.mole_rect = mole.getClientRects()[0];
-    state.round.mouse_end = [e.clientX, e.clientY];
-    this.setState(state, this.endRound);
+    state.round.mouse_misses.push([e.clientX, e.clientY]);
+    this.setState(state);
   },
 
   /**
