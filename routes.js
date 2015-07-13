@@ -1,5 +1,8 @@
+/* jslint node: true */
 'use strict';
-var worker = require('../worker/controllers');
+
+var log = global.log;
+var worker = require('crowdstudy_worker');
 var controllers = require('./controllers');
 
 /**
@@ -21,10 +24,13 @@ module.exports = function (app) {
     var ObjectId = require('mongodb').ObjectID;
     var workers = req.db.collection('workers');
     workers.find({_id: ObjectId(id)}).toArray(function (err, workers) {
-      if (err) return next(err);
+      if (err) {
+        return next(err);
+      }
 
-      log.info(workers);
-      if (workers.length < 1) return next(new Error('Failed to load Worker.'));
+      if (workers.length < 1) {
+        return next(new Error('Failed to load Worker.'));
+      }
 
       req.worker = workers[0];
       next();
