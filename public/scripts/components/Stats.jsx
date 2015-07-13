@@ -52,9 +52,9 @@ var StatsRow = React.createClass({
     return (
       <tr className={this.props.className}>
         <td><span data-toggle="tooltip" data-placement="left" title={this.props.tooltip}>{this.props.name}</span></td>
-        <td className={classes.num_hits}>{this.props.data.num_hits}</td>
-        <td className={classes.num_misses}>{this.props.data.num_misses}</td>
-        <td className={classes.score}>{this.props.data.score}</td>
+        <td className={classes.num_hits}>{Math.round(this.props.data.num_hits * 10)/10}</td>
+        <td className={classes.num_misses}>{Math.round(this.props.data.num_misses * 10)/10}</td>
+        <td className={classes.score}>{Math.round(this.props.data.score * 10)/10}</td>
         <td className={classes.mean_time_to_hit}>{Math.round(this.props.data.mean_time_to_hit) / 1000} seconds</td>
       </tr>
     );
@@ -68,7 +68,11 @@ var StatsRow = React.createClass({
 });
 var StatsView = React.createClass({
   render: function () {
-    var worker_stats = <StatsRow key={"worker"} name="You" data={this.props.stats} tooltip={TOOLTIPS.row.you}/>;
+    var worker_stats = <StatsRow key={"worker"} name="Last Round" data={this.props.stats.last_block} tooltip={TOOLTIPS.row.you}/>;
+    var worker_avg_stats = null;
+    if (this.props.stats.average_block) {
+      worker_avg_stats = <StatsRow key={"worker avg."} name="Average Round" data={this.props.stats.average_block} tooltip={TOOLTIPS.row.you}/>;
+    }
     var comparison_stats = null;
     var difference_of_stats = null;
 
@@ -97,6 +101,7 @@ var StatsView = React.createClass({
           </thead>
           <tbody>
             {worker_stats}
+            {worker_avg_stats}
             {comparison_stats}
           </tbody>
           <tfoot>
