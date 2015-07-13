@@ -7,7 +7,7 @@
       "url": "http://github.com/ncphillips/crowdstudy_whack_a_mole"
   },
   "dependencies": {
-    "crowdstudy_worker": "http://github.com/ncphillips/crowdstudy_master",
+    "crowdstudy_worker": "http://github.com/ncphillips/crowdstudy_worker",
     "mongodb": "1.4.34"
   }
 }
