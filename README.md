@@ -1,4 +1,6 @@
 # Crowd Experiment: Wack-A-Mole
-A React application made for the the Crowdstudy platform.
+A Whack-A-Mole game made for studying the effects of feedback on crowd workers 
+performance. 
 
-Must be installed within the `crowdstudy/experiments` to run.
+`crowdstudy_whack_a_mole` is a Express/React driven application created for the 
+[crowdstudy](http://github.com/ncphillips/crowdstudy) project.
