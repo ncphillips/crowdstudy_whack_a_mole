@@ -1,3 +1,4 @@
+/* jslint node: true */
 'use strict';
 var config = {
   /**
@@ -6,10 +7,11 @@ var config = {
    * How do we
    */
   feedback: {
-    types: [, 'real'],
+    types: ['none', 'real'],
     fake_types: []
   }
 };
+
 config.NONE= 'none';
 config.REAL = 'real';
 config.FAKE = 'fake';
