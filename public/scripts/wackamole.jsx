@@ -43,15 +43,19 @@ document.onmousemove = function (e) {
 
 var WackAMoleApp = React.createClass({
   render: function () {
-    var button = this.state.round.number >= 0 ? null: <input type="btn" className="btn btn-block btn-primary" value="Start!" onClick={this.startGame} disabled={this.state.round.number >= 0}/>
-    var percentage_done = Math.round((this.state.round.number / this.props.settings.wait_times.length) * 100);
+    var button = this.state.round.number >= 0 ? null:
+        (<input type="btn"
+                className="btn btn-block btn-primary"
+                value="Start!" onClick={this.startGame}
+                disabled={this.state.round.number >= 0} />);
+    var percentage_done = Math.round((this.state.block / this.props.settings.num_blocks) * 100);
     var style = {width: percentage_done.toString() + "%"};
 
     var display = null;
 
     switch (this.state.view) {
       case 'instructions':
-        display = (<Instructions rounds={WAIT_TIMES.length} interval={STATS_INTERVAL} hit={HIT} miss={MISS} down={DOWN}/>);
+        display = (<Instructions rounds={WAIT_TIMES.length} interval={this.props.settings.wait_times.length} hit={HIT} miss={MISS} down={DOWN}/>);
         break;
       case 'stats':
         display = (<StatsView worker={this.props.worker} round={this.state.round.number} stats={this._stats()} callback={this.saveQuestion} />);
@@ -135,8 +139,8 @@ var WackAMoleApp = React.createClass({
   startGame: function () {
     if (this.state.fullscreen){
       // Create a new Block.
-      var state= this.state.data;
-      state.show_stats = false;
+      var state= this.state;
+      state.view = 'game';
       state.data.push([]);
       state.round = {
         number: -1,
@@ -167,12 +171,8 @@ var WackAMoleApp = React.createClass({
     var next_round = this.state.round.number + 1;
     var new_state = this.state;
 
-    if (next_round > 0 && next_round % STATS_INTERVAL === 0 ){
-
-      this.setState(new_state);
-    }
-    else if (next_round >= this.props.settings.wait_times.length) {
-      this._exit(this.state.data);
+    if (next_round >= this.props.settings.wait_times.length) {
+      this.endBlock();
     }
     else {
       new_state.round.number = next_round;
@@ -265,7 +265,7 @@ var WackAMoleApp = React.createClass({
    */
   endRound: function () {
     var round = this.state.round;
-    var experiment_data = this.state.data;
+    var blocks = this.state.data;
     var d = {
       number: round.number,
       score: round.score,
@@ -281,17 +281,28 @@ var WackAMoleApp = React.createClass({
       mouse_misses: round.mouse_misses || []
     };
 
-    experiment_data[experiment_data.length].push(d);
+    // Push round data onto last block
+    blocks[blocks.length - 1].push(d);
 
     this.setState({
-      data: experiment_data
+      data: blocks
     }, this.startRound);
   },
   saveQuestion: function (q) {
     var questions = this.state.questions;
     questions.push(q);
 
-    this.setState({questions: questions}, this.startRound);
+    this.setState({questions: questions}, this.whatDoNext);
+  },
+  whatDoNext: function () {
+    if (this.state.block >= this.props.num_blocks) {
+      this._exit();
+    } else {
+      this.startGame();
+    }
+  },
+  endBlock: function () {
+    this.setState({view: 'stats', block: this.state.block+1});
   },
   _stats: function () {
     var stats = {
