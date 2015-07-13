@@ -61,13 +61,22 @@ var WackAMoleApp = React.createClass({
 
     var button = this.state.round.number >= 0 ? null: <input type="btn" className="btn btn-block btn-primary" value="Start!" onClick={this.startGame} disabled={this.state.round.number >= 0}/>
 
+    var percentage_done = Math.round((this.state.round.number / this.props.settings.wait_times.length) * 100);
+    var style = {width: percentage_done.toString() + "%"};
     return (
       <div>
         <div className="col-md-3"></div>
         <div className="col-md-6">
           <br/>
           <FullScreenButton fullscreen={this.state.fullscreen} callback={this.toggleFullScreen}></FullScreenButton>
-          <h2>Wack-A-Mole</h2>
+          <br/>
+          <div className="text-center">
+            <p>You have completed {this.state.round.number} out of {this.props.settings.wait_times.length} rounds!</p>
+          </div>
+          <div className="progress">
+            <div className="progress-bar" role="progressbar" style={style}> </div>
+          </div>
+          <h2>Whack-A-Mole</h2>
           <h3>Score: {this.state.round.score}</h3>
         {display}
         {button}
