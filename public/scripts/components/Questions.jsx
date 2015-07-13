@@ -49,14 +49,15 @@ var Questions = React.createClass({
     }
     var buttonDisabled = this.state.wait > 0;
     var buttonText = buttonDisabled ? "Continue in " + this.state.wait + " seconds." : "Continue";
+
     var questions = this.state.questions.map(function (text, i) {
       var refName = "answer" + (i+1);
       return (
-          <div><p>{text}</p>
-            <div className={areaClass}>
-              <textarea id={refName} ref={refName} className="form-control"/>
-            </div>
+        <div><p>{text}</p>
+          <div className={areaClass}>
+            <textarea id={refName} ref={refName} className="form-control"/>
           </div>
+        </div>
       );
     });
 

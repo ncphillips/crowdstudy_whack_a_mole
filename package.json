@@ -1,9 +1,13 @@
 {
-"name": "crowdstudy_whack_a_mole",
-"version": "1.0.0",
-"main": "app.js",
-"repository": {
-    "type": "git",
-    "url": "http://github.com/ncphillips/crowdstudy_whack_a_mole"
-}
+  "name": "crowdstudy_whack_a_mole",
+  "version": "1.0.0",
+  "main": "app.js",
+  "repository": {
+      "type": "git",
+      "url": "http://github.com/ncphillips/crowdstudy_whack_a_mole"
+  },
+  "dependencies": {
+    "crowdstudy_worker": "git://github.com/ncphillips/crowdstudy_worker",
+    "mongodb": "1.4.34"
+  }
 }

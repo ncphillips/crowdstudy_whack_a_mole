@@ -6,7 +6,6 @@ var Instructions = React.createClass({
   render: function () {
     return (
       <div>
-        <h3>Instructions</h3>
         <p>You have {this.props.rounds} chances to wack a mole!</p>
         <p>Every {this.props.interval} rounds you will be given feedback on your performance.</p>
         <ul>
