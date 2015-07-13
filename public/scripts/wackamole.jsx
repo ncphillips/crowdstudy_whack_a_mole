@@ -76,8 +76,9 @@ var WackAMoleApp = React.createClass({
           <div className="progress">
             <div className="progress-bar" role="progressbar" style={style}> </div>
           </div>
-          <h2>Whack-A-Mole</h2>
-          <h3>Score: {this.state.round.score}</h3>
+          <h2>Whack-A-Mole
+            <small className="pull-right">Score: {this.state.round.score}</small>
+          </h2>
         {display}
         {button}
         </div>
