@@ -2,7 +2,7 @@
 'use strict';
 
 var log = global.log;
-var worker = require('crowdstudy_worker');
+var worker = require('crowdstudy_worker').controllers;
 var controllers = require('./controllers');
 
 /**
@@ -23,7 +23,8 @@ module.exports = function (app) {
   app.param('id', function (req, res, next, id) {
     var ObjectId = require('mongodb').ObjectID;
     var workers = req.db.collection('workers');
-    workers.find({_id: ObjectId(id)}).toArray(function (err, workers) {
+
+    workers.find({_id: new ObjectId(id)}).toArray(function (err, workers) {
       if (err) {
         return next(err);
       }
@@ -36,7 +37,6 @@ module.exports = function (app) {
       next();
     });
   });
-
 };
 
 
