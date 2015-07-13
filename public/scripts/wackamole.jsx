@@ -71,7 +71,7 @@ var WackAMoleApp = React.createClass({
           <FullScreenButton fullscreen={this.state.fullscreen} callback={this.toggleFullScreen}></FullScreenButton>
           <br/>
           <div className="text-center">
-            <p>You have completed {this.state.round.number} out of {this.props.settings.wait_times.length} rounds!</p>
+            <p>You have completed {this.state.round.number + 1} out of {this.props.settings.wait_times.length} rounds!</p>
           </div>
           <div className="progress">
             <div className="progress-bar" role="progressbar" style={style}> </div>
