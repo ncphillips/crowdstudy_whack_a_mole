@@ -20,11 +20,12 @@ var DOWN = -1;
 // Field Dimensions
 var DIMENSIONS = [3, 3];
 
-// Rounds
-var STATS_INTERVAL = 10;
+// Blocks
+var NUM_BLOCKS = 5;
 
+// Rounds
 var WAIT_TIMES = [];
-for (var i = 1; i <= 50; i++) {
+for (var i = 1; i <= 10; i++) {
   WAIT_TIMES.push({low: 0.75, high: 2});
 }
 
@@ -42,27 +43,29 @@ document.onmousemove = function (e) {
 
 var WackAMoleApp = React.createClass({
   render: function () {
-    var display = null;
-    if (this.state.round.number > 0 && this.state.round.number % STATS_INTERVAL === 0) {
-      display = (<StatsView worker={this.props.worker} round={this.state.round.number} stats={this._stats()} callback={this.saveQuestion} />);
-    }
-    else if (this.state.round.number >= 0) {
-      var dim = this.props.settings.dimensions;
-      var row = this.state.round.mole_row;
-      var col = this.state.round.mole_col;
-      var hcb = this.moleHit;
-      var mcb = row !== 0 ? this.moleMiss : function () {};
-
-      display = (<Field dimensions={dim} row={row} patch={col} hit={hcb} miss={mcb}/>);
-    }
-    else {
-      display = <Instructions rounds={WAIT_TIMES.length} interval={STATS_INTERVAL} hit={HIT} miss={MISS} down={DOWN}/>;
-    }
-
     var button = this.state.round.number >= 0 ? null: <input type="btn" className="btn btn-block btn-primary" value="Start!" onClick={this.startGame} disabled={this.state.round.number >= 0}/>
-
     var percentage_done = Math.round((this.state.round.number / this.props.settings.wait_times.length) * 100);
     var style = {width: percentage_done.toString() + "%"};
+
+    var display = null;
+
+    switch (this.state.view) {
+      case 'instructions':
+        display = (<Instructions rounds={WAIT_TIMES.length} interval={STATS_INTERVAL} hit={HIT} miss={MISS} down={DOWN}/>);
+        break;
+      case 'stats':
+        display = (<StatsView worker={this.props.worker} round={this.state.round.number} stats={this._stats()} callback={this.saveQuestion} />);
+        break;
+      case 'game':
+        var dim = this.props.settings.dimensions;
+        var row = this.state.round.mole_row;
+        var col = this.state.round.mole_col;
+        var hcb = this.moleHit;
+        var mcb = row !== 0 ? this.moleMiss : function () {};
+        display = (<Field dimensions={dim} row={row} patch={col} hit={hcb} miss={mcb}/>);
+        break;
+    }
+
     return (
       <div>
         <div className="col-md-3"></div>
@@ -71,7 +74,7 @@ var WackAMoleApp = React.createClass({
           <FullScreenButton fullscreen={this.state.fullscreen} callback={this.toggleFullScreen}></FullScreenButton>
           <br/>
           <div className="text-center">
-           <p>You have completed {this.state.round.number + 1} out of {this.props.settings.wait_times.length} rounds!</p>
+           <p>You have completed {this.state.block} out of {this.props.settings.num_blocks} rounds!</p>
           </div>
           <div className="progress">
             <div className="progress-bar" role="progressbar" style={style}> </div>
@@ -97,7 +100,8 @@ var WackAMoleApp = React.createClass({
       },
       settings: {
         dimensions: DIMENSIONS,
-        wait_times: WAIT_TIMES
+        wait_times: WAIT_TIMES,
+        num_blocks: NUM_BLOCKS
       },
       worker: {
         id: '',
@@ -108,23 +112,12 @@ var WackAMoleApp = React.createClass({
   },
   getInitialState: function () {
     return {
+      view: 'instructions',
       fullscreen: false,
       questions: [],
-      data: [],
-      round: {
-        number: -1,
-        score: 0, // moleHit, moleMiss, moleDown
-        hit: null, // moleHit, moleDown
-        time_end: null, // moleHit, moleDown
-        time_interval: null, // moleUp
-        time_start: null, // moleUp
-        mole_rect: null, // moleUp
-        mole_row: 0, // moleBurrow
-        mole_col: 0, // moleBurrow
-        mouse_start: null, // moleUp
-        mouse_end: null, // moleHit, moleDown
-        mouse_misses: [] // moleMiss
-      }
+      block: 0,
+      data: [], // [ BLOCK, ], where BLOCK = [ROUND,]
+      round: { }
     }
   },
   componentDidMount: function () {
@@ -141,7 +134,25 @@ var WackAMoleApp = React.createClass({
   },
   startGame: function () {
     if (this.state.fullscreen){
-      this.startRound();
+      // Create a new Block.
+      var state= this.state.data;
+      state.show_stats = false;
+      state.data.push([]);
+      state.round = {
+        number: -1,
+        score: 0, // moleHit, moleMiss, moleDown
+        hit: null, // moleHit, moleDown
+        time_end: null, // moleHit, moleDown
+        time_interval: null, // moleUp
+        time_start: null, // moleUp
+        mole_rect: null, // moleUp
+        mole_row: 0, // moleBurrow
+        mole_col: 0, // moleBurrow
+        mouse_start: null, // moleUp
+        mouse_end: null, // moleHit, moleDown
+        mouse_misses: [] // moleMiss
+      };
+      this.replaceState(state, this.startRound);
     } else {
       alert("Please enter full-screen mode before starting.");
     }
@@ -157,7 +168,7 @@ var WackAMoleApp = React.createClass({
     var new_state = this.state;
 
     if (next_round > 0 && next_round % STATS_INTERVAL === 0 ){
-      new_state.round.number = next_round;
+
       this.setState(new_state);
     }
     else if (next_round >= this.props.settings.wait_times.length) {
@@ -270,7 +281,7 @@ var WackAMoleApp = React.createClass({
       mouse_misses: round.mouse_misses || []
     };
 
-    experiment_data.push(d);
+    experiment_data[experiment_data.length].push(d);
 
     this.setState({
       data: experiment_data
