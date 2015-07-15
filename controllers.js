@@ -1,4 +1,6 @@
+/* jslint node: true */
 'use strict';
+
 var config = require('./config');
 
 module.exports.experiment = function (req, res) {
