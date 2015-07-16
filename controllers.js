@@ -50,6 +50,8 @@ module.exports.generate_stats = function (req, res, next) {
   }
 };
 
+
+
 var real_stats = function (req, res, next) {
   var workers = req.db.collection('workers');
   workers.find({"experiments.wack_a_mole.data": {"$exists": true}}).toArray(function (err, workers) {
