@@ -60,7 +60,7 @@ var real_stats = function (req, res, next) {
     } else if (!workers) {
       workers = [];
     }
-    var nr = req.query.num_rounds;
+    var block_number = req.query.block || 0;
     var stats = {
       num_hits: 0 ,
       num_misses: 0,
@@ -68,30 +68,25 @@ var real_stats = function (req, res, next) {
       mean_time_to_hit: 0,
       sum_time_to_hit: 0
     };
-    workers.forEach(function (worker, index) {
-      var rounds =   worker.experiments.wack_a_mole.data.rounds;
-      var num = 0;
-
-      if (!nr || nr >= rounds.length) {
-        num = rounds.length;
-      }
-      else {
-        num = nr;
-      }
+    workers.forEach(function (worker) {
+      var block =   worker.experiments.wack_a_mole.data.blocks[block_number];
       var sum_time_to_hit = 0;
-      for(var i=0; i < num; i++){
-        stats.num_hits += rounds[i].hit ? 1: 0;
-        stats.num_misses += rounds[i].hit ? 0: 1;
-        sum_time_to_hit += (rounds[i].hit)? (rounds[i].time_end - rounds[i].time_start):0;
+      var num_hits = 0;
+      for(var i=0; i < block.rounds.length; i++){
+        num_hits += block.rounds[i].hit ? 1: 0;
+        stats.num_misses += block.rounds[i].hit ? 0: 1;
+        stats.num_misses += block.rounds[i].mouse_misses.length;
+        sum_time_to_hit += (block.rounds[i].hit)? (block[i].time_end - block[i].time_start):0;
       }
-      stats.mean_time_to_hit = sum_time_to_hit / num;
+      stats.score += block[block.length - 1].score;
+      stats.num_hits += num_hits;
+      stats.mean_time_to_hit += sum_time_to_hit / num_hits;
     });
 
-
     var count = workers.length || 1;
+    stats.score = stats.score / count;
     stats.num_hits = stats.num_hits / count;
     stats.num_misses = stats.num_misses / count;
-    stats.score = stats.num_hits - stats.num_misses;
     stats.mean_time_to_hit = stats.mean_time_to_hit / count;
     req.stats = stats;
     next();
