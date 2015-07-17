@@ -310,7 +310,7 @@ var WackAMoleApp = React.createClass({
     var last_block = blocks[n - 1];
 
     var last_block_stats = wamstats.generateBlockStats(last_block);
-    var average_block_stats = wamstats.generateAverageStats(blocks.splice(0, n - 1));
+    var average_block_stats = n > 1 ? wamstats.generateAverageStats(blocks.splice(0, n - 1)) : {};
 
     return {last_block: last_block_stats, average_block: average_block_stats};
   },

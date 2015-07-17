@@ -11,7 +11,7 @@ var TOOLTIPS = {
     num_hits: "The number of times you successfully hit the mole.",
     num_misses: "The number of times you missed the mol",
     score: "# hits - # misses",
-    mean_time_to_hit: "How long it took you to hit hte mole."
+    time_per_mole: "How long it took you to hit hte mole."
   }
 };
 
@@ -25,7 +25,7 @@ var LABELS = {
     num_hits: "# Hits",
     num_misses: "# Misses",
     score: "Score",
-    mean_time_to_hit: "Reaction Time"
+    time_per_mole: "Reaction Time"
   }
 };
 
@@ -41,13 +41,13 @@ var StatsRow = React.createClass({
       num_hits: 'active',
       num_misses: 'active',
       score: 'active',
-      mean_time_to_hit: 'active'
+      time_per_mole: 'active'
     };
     if (this.props.colorCells){
       classes.num_hits = this.props.data.num_hits > 0 ? h : l;
       classes.num_misses = this.props.data.num_misses < 0 ? h : l;
       classes.score = this.props.data.score > 0 ? h : l;
-      classes.mean_time_to_hit = this.props.data.mean_time_to_hit < 0 ? h : l;
+      classes.timer_per_mole = this.props.data.time_per_mole < 0 ? h : l;
     }
     return (
       <tr className={this.props.className}>
@@ -55,7 +55,7 @@ var StatsRow = React.createClass({
         <td className={classes.num_hits}>{Math.round(this.props.data.num_hits * 10)/10}</td>
         <td className={classes.num_misses}>{Math.round(this.props.data.num_misses * 10)/10}</td>
         <td className={classes.score}>{Math.round(this.props.data.score * 10)/10}</td>
-        <td className={classes.mean_time_to_hit}>{Math.round(this.props.data.mean_time_to_hit) / 1000} seconds</td>
+        <td className={classes.time_per_mole}>{Math.round(this.props.data.time_per_mole) / 1000} seconds</td>
       </tr>
     );
   },
@@ -82,7 +82,7 @@ var StatsView = React.createClass({
         num_hits: this.props.stats.num_hits - this.state.cstats.num_hits,
         num_misses: this.props.stats.num_misses - this.state.cstats.num_misses,
         score: this.props.stats.score - this.state.cstats.score,
-        mean_time_to_hit: this.props.stats.mean_time_to_hit - this.state.cstats.mean_time_to_hit
+        time_per_mole: this.props.stats.time_per_mole - this.state.cstats.time_per_mole
       };
       difference_of_stats = <StatsRow key={"diff"} name="Difference" data={difference} tooltip={TOOLTIPS.row.difference} colorCells={true}/>;
     }
@@ -96,7 +96,7 @@ var StatsView = React.createClass({
               <td><span data-toggle="tooltip" data-placement="top" title={TOOLTIPS.col.num_hits}>{LABELS.col.num_hits}</span></td>
               <td><span data-toggle="tooltip" data-placement="top" title={TOOLTIPS.col.num_misses}>{LABELS.col.num_misses}</span></td>
               <td><span data-toggle="tooltip" data-placement="top" title={TOOLTIPS.col.score}>{LABELS.col.score}</span></td>
-              <td><span data-toggle="tooltip" data-placement="top" title={TOOLTIPS.col.mean_time_to_hit}>{LABELS.col.mean_time_to_hit}</span></td>
+              <td><span data-toggle="tooltip" data-placement="top" title={TOOLTIPS.col.time_per_mole}>{LABELS.col.time_per_mole}</span></td>
             </tr>
           </thead>
           <tbody>

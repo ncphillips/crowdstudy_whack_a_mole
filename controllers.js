@@ -2,6 +2,7 @@
 'use strict';
 
 var config = require('./config');
+var log = global.log;
 
 module.exports.experiment = function (req, res) {
   res.render('index', {});
@@ -66,6 +67,7 @@ var real_stats = function (req, res, next) {
       population_average: wamstats.wamstats.generatePopulationAverageStats(workers),
       population_elite: wamstats.wamstats.generatePopulationEliteStats(workers)
     };
+    log(req.stats);
     next();
   });
 };

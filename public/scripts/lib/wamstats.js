@@ -92,7 +92,7 @@ var wamstats = (function () {
     };
     var sum_time_to_hit = 0;
     var sum_miss_on_mole = 0;
-    block.rounds.forEach(function (round) {
+    block.forEach(function (round) {
       // Total Time
       var time = (round.time_end - round.time_start);
       stats.time += time;
@@ -119,7 +119,7 @@ var wamstats = (function () {
     });
     stats.time_per_mole = sum_time_to_hit / stats.num_hits;
     stats.misses_per_mole = sum_miss_on_mole / stats.num_hits;
-    stats.score = block.rounds[block.length - 1];
+    stats.score = block[block.length - 1].score;
 
     stats.rank = stats.score / stats.time;
     return stats;
@@ -169,7 +169,7 @@ var wamstats = (function () {
   };
 })();
 
-if (module) {
+if (typeof module !== 'undefined') {
   module.exports.wamstats = wamstats;
   module.exports.statsandstones = statsandstones;
 }
