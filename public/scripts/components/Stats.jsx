@@ -37,6 +37,7 @@ var StatsRow = React.createClass({
   render: function () {
     var h = 'success';
     var l = 'danger';
+    console.log("Stats row data:", this.props.data);
     var classes = {
       num_hits: 'active',
       num_misses: 'active',
@@ -115,7 +116,7 @@ var StatsView = React.createClass({
   componentDidMount: function () {
     $.ajax({
       type: 'GET',
-      url: '/wack_a_mole/' + this.props.worker._id + '/stats?num_rounds=' + this.props.round,
+      url: '/whack_a_mole/' + this.props.worker._id + '/stats',
       dataType: 'json',
       success: this.setComparisonStats,
       error: function (a, b, c) {

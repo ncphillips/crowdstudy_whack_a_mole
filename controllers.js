@@ -2,21 +2,21 @@
 'use strict';
 
 var config = require('./config');
-var log = global.log;
 
 module.exports.experiment = function (req, res) {
   res.render('index', {});
 };
 
 module.exports.experiment_name = function (req, res, next) {
-  req.experiment_name = 'wack_a_mole';
+  req.experiment_name = 'whack_a_mole';
   next();
 };
 
 module.exports.hook_worker_registration = function (req, res, next) {
   var workers = req.db.collection('workers');
-  workers.find({"experiments.wack_a_mole.completed": {$in: [true, 'true']}}, function (err, workers) {
-    var feedback_type = 'none';
+  console.log("hook_worker_registration");
+  workers.find({"experiments.whack_a_mole.completed": {$in: [true, 'true']}}, function (err, workers) {
+    var feedback_type = config.NONE;
     var count = 0;
     if (err) {
       console.log(err);
@@ -34,6 +34,7 @@ module.exports.hook_worker_registration = function (req, res, next) {
 };
 
 module.exports.generate_stats = function (req, res, next) {
+  console.log("GENERATING STATS");
   req.stats = {};
   switch (req.experiment.feedback_type) {
     case config.NONE:
@@ -56,7 +57,8 @@ module.exports.generate_stats = function (req, res, next) {
 var real_stats = function (req, res, next) {
   var wamstats = require('./public/scripts/lib/wamstats');
   var workers = req.db.collection('workers');
-  workers.find({"experiments.wack_a_mole.data": {"$exists": true}}).toArray(function (err, workers) {
+  console.log("REAL STATS");
+  workers.find({"experiments.whack_a_mole.data": {"$exists": true}}).toArray(function (err, workers) {
     if (err) {
       return next(err);
     } else if (!workers) {
@@ -67,7 +69,7 @@ var real_stats = function (req, res, next) {
       population_average: wamstats.wamstats.generatePopulationAverageStats(workers),
       population_elite: wamstats.wamstats.generatePopulationEliteStats(workers)
     };
-    log(req.stats);
+    console.log(req.stats);
     next();
   });
 };
@@ -79,6 +81,7 @@ var fake_stats = function (req, res, next) {
 exports.fake_stats = fake_stats;
 
 exports.returnStats = function (req, res) {
+  console.log("RETURN STATS");
   res.json(req.stats);
 };
 

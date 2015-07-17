@@ -1,4 +1,4 @@
-# Crowd Experiment: Wack-A-Mole
+# Crowd Experiment: Whack-A-Mole
 A Whack-A-Mole game made for studying the effects of feedback on crowd workers 
 performance. 
 

@@ -6,12 +6,12 @@ var Instructions = React.createClass({
   render: function () {
     return (
       <div>
-        <p>You have {this.props.rounds} chances to wack a mole!</p>
+        <p>You have {this.props.rounds} chances to whack a mole!</p>
         <p>Every {this.props.interval} rounds you will be given feedback on your performance.</p>
         <ul>
-          <li>{this.props.hit} points for every mole wacked!</li>
-          <li>{this.props.miss} points for each wack that misses!</li>
-          <li>{this.props.down} points for each mole that hides before you wack them!</li>
+          <li>{this.props.hit} points for every mole whacked!</li>
+          <li>{this.props.miss} points for each whack that misses!</li>
+          <li>{this.props.down} points for each mole that hides before you whack them!</li>
         </ul>
       </div>
     );

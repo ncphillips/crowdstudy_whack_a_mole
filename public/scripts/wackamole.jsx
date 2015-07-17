@@ -41,7 +41,7 @@ document.onmousemove = function (e) {
   mouseY = e.pageY;
 };
 
-var WackAMoleApp = React.createClass({
+var WhackAMoleApp = React.createClass({
   render: function () {
     var button = this.state.round.number >= 0 ? null:
         (<input type="btn"
@@ -326,6 +326,6 @@ var WackAMoleApp = React.createClass({
 
 
 React.render(
-  <CrowdExperiment experiment_name="wack_a_mole" experiment_app={WackAMoleApp}/>,
-  document.getElementById('wack-a-mole')
+  <CrowdExperiment experiment_name="whack_a_mole" experiment_app={WhackAMoleApp}/>,
+  document.getElementById('app')
 );
