@@ -14,7 +14,6 @@ module.exports.experiment_name = function (req, res, next) {
 
 module.exports.hook_worker_registration = function (req, res, next) {
   var workers = req.db.collection('workers');
-  console.log("hook_worker_registration");
   workers.find({"experiments.whack_a_mole.completed": {$in: [true, 'true']}}, function (err, workers) {
     var feedback_type = config.NONE;
     var count = 0;
@@ -34,7 +33,6 @@ module.exports.hook_worker_registration = function (req, res, next) {
 };
 
 module.exports.generate_stats = function (req, res, next) {
-  console.log("GENERATING STATS");
   req.stats = {};
   switch (req.experiment.feedback_type) {
     case config.NONE:
@@ -57,19 +55,16 @@ module.exports.generate_stats = function (req, res, next) {
 var real_stats = function (req, res, next) {
   var wamstats = require('./public/scripts/lib/wamstats');
   var workers = req.db.collection('workers');
-  console.log("REAL STATS");
   workers.find({"experiments.whack_a_mole.data": {"$exists": true}}).toArray(function (err, workers) {
     if (err) {
       return next(err);
-    } else if (!workers) {
-      workers = [];
+    } else if (workers.length < 1) {
+      return next();
     }
-
     req.stats = {
       population_average: wamstats.wamstats.generatePopulationAverageStats(workers),
       population_elite: wamstats.wamstats.generatePopulationEliteStats(workers)
     };
-    console.log(req.stats);
     next();
   });
 };
@@ -81,7 +76,6 @@ var fake_stats = function (req, res, next) {
 exports.fake_stats = fake_stats;
 
 exports.returnStats = function (req, res) {
-  console.log("RETURN STATS");
   res.json(req.stats);
 };
 

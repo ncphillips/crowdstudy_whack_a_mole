@@ -120,7 +120,7 @@ var WhackAMoleApp = React.createClass({
       fullscreen: false,
       questions: [],
       block: 0,
-      data: [], // [ BLOCK, ], where BLOCK = [ROUND,]
+      blocks: [], // [ BLOCK, ], where BLOCK = [ROUND,]
       round: { }
     }
   },
@@ -141,7 +141,7 @@ var WhackAMoleApp = React.createClass({
       // Create a new Block.
       var state= this.state;
       state.view = 'game';
-      state.data.push([]);
+      state.blocks.push([]);
       state.round = {
         number: -1,
         score: 0, // moleHit, moleMiss, moleDown
@@ -265,8 +265,9 @@ var WhackAMoleApp = React.createClass({
    */
   endRound: function () {
     var round = this.state.round;
-    var blocks = this.state.data;
+    var blocks = this.state.blocks;
     var d = {
+      block: this.state.block,
       number: round.number,
       score: round.score,
       hit: round.hit,
@@ -282,10 +283,10 @@ var WhackAMoleApp = React.createClass({
     };
 
     // Push round data onto last block
-    blocks[blocks.length - 1].push(d);
+    blocks[this.state.block][round.number] = d;
 
     this.setState({
-      data: blocks
+      blocks: blocks
     }, this.startRound);
   },
   saveQuestion: function (q) {
@@ -306,17 +307,20 @@ var WhackAMoleApp = React.createClass({
   },
   _stats: function () {
     var n = this.state.block;
-    var blocks = this.state.data;
-    var last_block = blocks[n - 1];
+    var blocks = [];
+    for (var i=0; i < this.state.blocks.length - 1; i++) {
+      blocks.push(this.state.blocks[i]);
+    }
+    var last_block = this.state.blocks[this.state.blocks.length - 1];
 
     var last_block_stats = wamstats.generateBlockStats(last_block);
-    var average_block_stats = n > 1 ? wamstats.generateAverageStats(blocks.splice(0, n - 1)) : {};
+    var average_block_stats = n > 1 ? wamstats.generateAverageStats(blocks) : null;
 
     return {last_block: last_block_stats, average_block: average_block_stats};
   },
   _exit: function () {
     var output = this._stats();
-    output.rounds = this.state.data;
+    output.blocks = this.state.blocks;
     output.questions = this.state.questions;
 
     this.props.exit(output);

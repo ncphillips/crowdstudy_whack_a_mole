@@ -69,23 +69,25 @@ var StatsRow = React.createClass({
 });
 var StatsView = React.createClass({
   render: function () {
-    var worker_stats = <StatsRow key={"worker"} name="Last Round" data={this.props.stats.last_block} tooltip={TOOLTIPS.row.you}/>;
+    var worker_stats = <StatsRow key={"worker"} name="Your Last Round" data={this.props.stats.last_block} tooltip={TOOLTIPS.row.you}/>;
     var worker_avg_stats = null;
     if (this.props.stats.average_block) {
-      worker_avg_stats = <StatsRow key={"worker avg."} name="Average Round" data={this.props.stats.average_block} tooltip={TOOLTIPS.row.you}/>;
+      worker_avg_stats = <StatsRow key={"worker avg."} name="Your Average Round" data={this.props.stats.average_block} tooltip={TOOLTIPS.row.you}/>;
     }
-    var comparison_stats = null;
+    var avg_worker_stats = null;
+    var elite_worker_stats = null;
     var difference_of_stats = null;
 
     if (Object.getOwnPropertyNames(this.state.cstats).length > 1) {
-      comparison_stats = <StatsRow key={"average"} name="Average" data={this.state.cstats} tooltip={TOOLTIPS.row.average}/>;
-      var difference = {
-        num_hits: this.props.stats.num_hits - this.state.cstats.num_hits,
-        num_misses: this.props.stats.num_misses - this.state.cstats.num_misses,
-        score: this.props.stats.score - this.state.cstats.score,
-        time_per_mole: this.props.stats.time_per_mole - this.state.cstats.time_per_mole
-      };
-      difference_of_stats = <StatsRow key={"diff"} name="Difference" data={difference} tooltip={TOOLTIPS.row.difference} colorCells={true}/>;
+      avg_worker_stats = <StatsRow key={"average"} name="Average Worker's Round" data={this.state.cstats.population_average} tooltip={TOOLTIPS.row.average}/>;
+      elite_worker_stats = <StatsRow key={"elite"} name="Top Worker's Round" data={this.state.cstats.population_elite} tooltip={TOOLTIPS.row.average}/>;
+      //var difference = {
+      //  num_hits: this.props.stats.num_hits - this.state.cstats.num_hits,
+      //  num_misses: this.props.stats.num_misses - this.state.cstats.num_misses,
+      //  score: this.props.stats.score - this.state.cstats.score,
+      //  time_per_mole: this.props.stats.time_per_mole - this.state.cstats.time_per_mole
+      //};
+      //difference_of_stats = <StatsRow key={"diff"} name="Difference" data={difference} tooltip={TOOLTIPS.row.difference} colorCells={true}/>;
     }
     return (
       <div>
@@ -103,7 +105,8 @@ var StatsView = React.createClass({
           <tbody>
             {worker_stats}
             {worker_avg_stats}
-            {comparison_stats}
+            {avg_worker_stats}
+            {elite_worker_stats}
           </tbody>
           <tfoot>
             {difference_of_stats}

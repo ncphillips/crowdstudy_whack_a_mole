@@ -19,7 +19,7 @@ var statsandstones = (function () {
           if (!result.hasOwnProperty(name)){
             result[name] = 0;
           }
-          result[name] += stat[name];
+          result[name] += parseInt(stat[name]) || 0;
         }
       }
     });
@@ -37,9 +37,13 @@ var statsandstones = (function () {
    *
    * @param stats
    * @param property_name
+   * @param reverse
    * @returns {*}
    */
   function sortStats(stats, property_name, reverse) {
+    if (typeof reverse === 'undefined') {
+      reverse = false;
+    }
     // Order these by the property_name;
     if (stats.length <= 1) {
       return stats;
@@ -51,17 +55,26 @@ var statsandstones = (function () {
     var less = [];
     var more = [];
 
-    stats.splice(pivot, 1);
-
-    stats.forEach(function(stat) {
+    var stat;
+    for (var i=0; i < pivot; i++) {
+      stat = stats[i];
       if (reverse) {
-        stat[property_name] > val[property_name] ? less.push(stat): more.push(stat);
-      } else {
         stat[property_name] < val[property_name] ? less.push(stat): more.push(stat);
+      } else {
+        stat[property_name] > val[property_name] ? less.push(stat): more.push(stat);
       }
-    });
+    }
 
-    return (sortStats(less, property_name, reverse)).concat([val], sortStats(more));
+    for (i=pivot+1; i < stats.length; i++) {
+      stat = stats[i];
+      if (reverse) {
+        stat[property_name] < val[property_name] ? less.push(stat): more.push(stat);
+      } else {
+        stat[property_name] > val[property_name] ? less.push(stat): more.push(stat);
+      }
+    }
+
+    return (sortStats(less, property_name, reverse)).concat([val], sortStats(more, property_name, reverse));
   }
 
   return {
@@ -105,12 +118,15 @@ var wamstats = (function () {
       // # Y
       var num_misses = 0;
       num_misses += (round.hit) ? 0 : 1;
-      num_misses += round.mouse_misses.length;
+      num_misses += (round.mouse_misses) ? round.mouse_misses.length : 0;
       stats.num_misses += num_misses;
 
       // Y / X
       //    Misses per Mole doesn't take into account rounds
       //    when the mole is not hit.
+      if (typeof round.hit !== 'boolean') {
+        round.hit = (round.hit === 'true');
+      }
       sum_miss_on_mole += (round.hit) ? num_misses : 0;
 
       // Num Hits
@@ -120,7 +136,6 @@ var wamstats = (function () {
     stats.time_per_mole = sum_time_to_hit / stats.num_hits;
     stats.misses_per_mole = sum_miss_on_mole / stats.num_hits;
     stats.score = block[block.length - 1].score;
-
     stats.rank = stats.score / stats.time;
     return stats;
   }
@@ -137,14 +152,14 @@ var wamstats = (function () {
     var block_stats = blocks.map(generateBlockStats);
 
     // Aggregate all block stats objects and return the result;
-    return statsandstones.aggregateStats(blocks);
+    return statsandstones.aggregateStats(block_stats);
   }
 
   function generatePopulationEliteStats(workers) {
     // Get the aggregated stats object for  a worker.
     var n = Math.ceil(workers.length * 0.15) || 1;
     var worker_average_stats = workers.map(function (worker) {
-      return generateAverageBlockStats(worker.data.blocks);
+      return generateAverageBlockStats(worker.experiments.whack_a_mole.data.blocks);
     });
     var fastest_workers = statsandstones.sortStats(worker_average_stats, 'time', true);
     var scoriest_workers = statsandstones.sortStats(worker_average_stats, 'score');
@@ -154,7 +169,7 @@ var wamstats = (function () {
 
   function generatePopulationAverageStats(workers) {
     var worker_average_stats = workers.map(function (worker) {
-      return generateAverageBlockStats(worker.data.blocks);
+      return generateAverageBlockStats(worker.experiments.whack_a_mole.data.blocks);
     });
 
     return statsandstones.aggregateStats(worker_average_stats);
