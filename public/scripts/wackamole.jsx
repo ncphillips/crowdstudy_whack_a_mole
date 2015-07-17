@@ -305,63 +305,14 @@ var WackAMoleApp = React.createClass({
     this.setState({view: 'stats', block: this.state.block+1});
   },
   _stats: function () {
-    // Last Block
-    var last_block = {
-      rounds: this.state.data[this.state.block - 1],
-      num_hits: 0,
-      num_misses: 0,
-      mean_time_to_hit: 0
-    };
-    last_block.score = last_block.rounds[last_block.rounds.length - 1].score;
-    var sum_time_to_hit = 0;
-    last_block.rounds.forEach(function (round) {
-      last_block.num_hits   += round.hit ? 1 : 0;
-      last_block.num_misses += round.hit ? 0 : 1;
-      last_block.num_misses += round.mouse_misses.length;
-      if (round.hit){
-        sum_time_to_hit += (round.time_end - round.time_start);
-      }
-    });
+    var n = this.state.block;
+    var blocks = this.state.data;
+    var last_block = blocks[n - 1];
 
-    last_block.mean_time_to_hit = sum_time_to_hit / last_block.num_hits;
+    var last_block_stats = wamstats.generateBlockStats(last_block);
+    var average_block_stats = wamstats.generateAverageStats(blocks.splice(0, n - 1));
 
-    // Average Block
-    var average_block = null;
-    if (this.state.data.length > 1) {
-      average_block = {
-        num_hits: 0,
-        num_misses: 0,
-        mean_time_to_hit: 0,
-        score: 0
-      };
-
-      var b;
-      var num_hits;
-      for (var i=0; i < this.state.data.length - 1; i ++) {
-        b = this.state.data[i];
-        sum_time_to_hit = 0;
-        num_hits = 0;
-        b.forEach(function (round) {
-          num_hits   += round.hit ? 1 : 0;
-          average_block.num_misses += round.hit ? 0 : 1;
-          average_block.num_misses += round.mouse_misses.length;
-          if (round.hit){
-            sum_time_to_hit += (round.time_end - round.time_start);
-          }
-        });
-
-        average_block.score += b[b.length-1].score;
-        average_block.num_hits += num_hits;
-        average_block.mean_time_to_hit += sum_time_to_hit / num_hits;
-      }
-
-      average_block.score = average_block.score / (this.state.data.length - 1);
-      average_block.num_hits = average_block.num_hits / (this.state.data.length - 1);
-      average_block.num_misses = average_block.num_misses / (this.state.data.length - 1);
-      average_block.mean_time_to_hit = average_block.mean_time_to_hit / (this.state.data.length -1);
-    }
-
-    return {last_block: last_block, average_block: average_block};
+    return {last_block: last_block_stats, average_block: average_block_stats};
   },
   _exit: function () {
     var output = this._stats();

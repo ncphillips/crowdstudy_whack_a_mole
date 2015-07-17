@@ -53,6 +53,7 @@ module.exports.generate_stats = function (req, res, next) {
 
 
 var real_stats = function (req, res, next) {
+  var wamstats = require('./public/scripts/lib/wamstats');
   var workers = req.db.collection('workers');
   workers.find({"experiments.wack_a_mole.data": {"$exists": true}}).toArray(function (err, workers) {
     if (err) {
@@ -60,35 +61,11 @@ var real_stats = function (req, res, next) {
     } else if (!workers) {
       workers = [];
     }
-    var block_number = req.query.block || 0;
-    var stats = {
-      num_hits: 0 ,
-      num_misses: 0,
-      score: 0,
-      mean_time_to_hit: 0,
-      sum_time_to_hit: 0
-    };
-    workers.forEach(function (worker) {
-      var block =   worker.experiments.wack_a_mole.data.blocks[block_number];
-      var sum_time_to_hit = 0;
-      var num_hits = 0;
-      for(var i=0; i < block.rounds.length; i++){
-        num_hits += block.rounds[i].hit ? 1: 0;
-        stats.num_misses += block.rounds[i].hit ? 0: 1;
-        stats.num_misses += block.rounds[i].mouse_misses.length;
-        sum_time_to_hit += (block.rounds[i].hit)? (block[i].time_end - block[i].time_start):0;
-      }
-      stats.score += block[block.length - 1].score;
-      stats.num_hits += num_hits;
-      stats.mean_time_to_hit += sum_time_to_hit / num_hits;
-    });
 
-    var count = workers.length || 1;
-    stats.score = stats.score / count;
-    stats.num_hits = stats.num_hits / count;
-    stats.num_misses = stats.num_misses / count;
-    stats.mean_time_to_hit = stats.mean_time_to_hit / count;
-    req.stats = stats;
+    req.stats = {
+      population_average: wamstats.wamstats.generatePopulationAverageStats(workers),
+      population_elite: wamstats.wamstats.generatePopulationEliteStats(workers)
+    };
     next();
   });
 };
