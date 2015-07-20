@@ -22,10 +22,11 @@ var LABELS = {
     diff: "Difference"
   },
   col: {
+    time: 'Time',
     num_hits: "# Hits",
     num_misses: "# Misses",
     score: "Score",
-    time_per_mole: "Reaction Time"
+    time_per_mole: "Time/Mole"
   }
 };
 
@@ -39,12 +40,14 @@ var StatsRow = React.createClass({
     var l = 'danger';
     console.log("Stats row data:", this.props.data);
     var classes = {
+      time: 'active',
       num_hits: 'active',
       num_misses: 'active',
       score: 'active',
       time_per_mole: 'active'
     };
     if (this.props.colorCells){
+      classes.time = this.props.data.time > 0 ? h : l;
       classes.num_hits = this.props.data.num_hits > 0 ? h : l;
       classes.num_misses = this.props.data.num_misses < 0 ? h : l;
       classes.score = this.props.data.score > 0 ? h : l;
@@ -53,10 +56,11 @@ var StatsRow = React.createClass({
     return (
       <tr className={this.props.className}>
         <td><span data-toggle="tooltip" data-placement="left" title={this.props.tooltip}>{this.props.name}</span></td>
-        <td className={classes.num_hits}>{Math.round(this.props.data.num_hits * 10)/10}</td>
+        <td className={classes.time}>{Math.round(this.props.data.time / 10)/100} sec.</td>
+        <td className={classes.time_per_mole}>{Math.round(this.props.data.time_per_mole) / 1000} sec.</td>
         <td className={classes.num_misses}>{Math.round(this.props.data.num_misses * 10)/10}</td>
+        <td className={classes.num_hits}>{Math.round(this.props.data.num_hits * 10)/10}</td>
         <td className={classes.score}>{Math.round(this.props.data.score * 10)/10}</td>
-        <td className={classes.time_per_mole}>{Math.round(this.props.data.time_per_mole) / 1000} seconds</td>
       </tr>
     );
   },
@@ -79,7 +83,7 @@ var StatsView = React.createClass({
     var difference_of_stats = null;
 
     if (Object.getOwnPropertyNames(this.state.cstats).length > 1) {
-      avg_worker_stats = <StatsRow key={"average"} name="Average Worker's Round" data={this.state.cstats.population_average} tooltip={TOOLTIPS.row.average}/>;
+      avg_worker_stats = <StatsRow key={"average"} name="Avg. Worker's Round" data={this.state.cstats.population_average} tooltip={TOOLTIPS.row.average}/>;
       elite_worker_stats = <StatsRow key={"elite"} name="Top Worker's Round" data={this.state.cstats.population_elite} tooltip={TOOLTIPS.row.average}/>;
       //var difference = {
       //  num_hits: this.props.stats.num_hits - this.state.cstats.num_hits,
@@ -96,10 +100,11 @@ var StatsView = React.createClass({
           <thead>
             <tr>
               <td></td>
-              <td><span data-toggle="tooltip" data-placement="top" title={TOOLTIPS.col.num_hits}>{LABELS.col.num_hits}</span></td>
-              <td><span data-toggle="tooltip" data-placement="top" title={TOOLTIPS.col.num_misses}>{LABELS.col.num_misses}</span></td>
-              <td><span data-toggle="tooltip" data-placement="top" title={TOOLTIPS.col.score}>{LABELS.col.score}</span></td>
+              <td><span data-toggle="tooltip" data-placement="top" title={TOOLTIPS.col.time}>{LABELS.col.time}</span></td>
               <td><span data-toggle="tooltip" data-placement="top" title={TOOLTIPS.col.time_per_mole}>{LABELS.col.time_per_mole}</span></td>
+              <td><span data-toggle="tooltip" data-placement="top" title={TOOLTIPS.col.num_misses}>{LABELS.col.num_misses}</span></td>
+              <td><span data-toggle="tooltip" data-placement="top" title={TOOLTIPS.col.num_hits}>{LABELS.col.num_hits}</span></td>
+              <td><span data-toggle="tooltip" data-placement="top" title={TOOLTIPS.col.score}>{LABELS.col.score}</span></td>
             </tr>
           </thead>
           <tbody>
