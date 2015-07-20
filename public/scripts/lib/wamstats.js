@@ -161,9 +161,8 @@ var wamstats = (function () {
     var worker_average_stats = workers.map(function (worker) {
       return generateAverageBlockStats(worker.experiments.whack_a_mole.data.blocks);
     });
-    var fastest_workers = statsandstones.sortStats(worker_average_stats, 'time', true);
-    var scoriest_workers = statsandstones.sortStats(worker_average_stats, 'score');
-    var elite_worker_stats = fastest_workers.splice(0, n).concat(scoriest_workers.splice(0, n));
+    var elite_workers = statsandstones.sortStats(worker_average_stats, 'rank');
+    var elite_worker_stats = elite_workers.splice(0, n)
     return statsandstones.aggregateStats(elite_worker_stats);
   }
 
