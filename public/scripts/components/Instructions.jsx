@@ -13,6 +13,7 @@ var Instructions = React.createClass({
           <li>{this.props.miss} points for each whack that misses!</li>
           <li>{this.props.down} points for each mole that hides before you whack them!</li>
         </ul>
+        <p>Please click the 'Enter Full-Screen' button above to get started.</p>
       </div>
     );
   },

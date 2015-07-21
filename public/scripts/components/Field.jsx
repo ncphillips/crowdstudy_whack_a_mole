@@ -88,7 +88,7 @@ var Field = React.createClass({
 
       rows.push(<Row {...this.props} key={i} mole_patch={mole_patch}/>);
     }
-    return <div><table>{rows}</table></div>;
+    return <div className="text-center"><table className="text-center" style={{"margin-left": "auto", "margin-right": "auto"}}>{rows}</table></div>;
   }
 });
 

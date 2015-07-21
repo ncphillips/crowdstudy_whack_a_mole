@@ -44,10 +44,10 @@ document.onmousemove = function (e) {
 var WhackAMoleApp = React.createClass({
   render: function () {
     var button = this.state.round.number >= 0 ? null:
-        (<input type="btn"
-                className="btn btn-block btn-primary"
-                value="Start!" onClick={this.startGame}
-                disabled={this.state.round.number >= 0} />);
+      (<input type="btn"
+              className="btn btn-block btn-primary"
+              value="Start!" onClick={this.startGame}
+              disabled={this.state.round.number >= 0} />);
     var percentage_done = Math.round((this.state.block / this.props.settings.num_blocks) * 100);
     var style = {width: percentage_done.toString() + "%"};
 
@@ -78,16 +78,17 @@ var WhackAMoleApp = React.createClass({
           <FullScreenButton fullscreen={this.state.fullscreen} callback={this.toggleFullScreen}></FullScreenButton>
           <br/>
           <div className="text-center">
-           <p>You have completed {this.state.block} out of {this.props.settings.num_blocks} rounds!</p>
+            <p>You have completed {this.state.block} out of {this.props.settings.num_blocks} rounds!</p>
           </div>
           <div className="progress">
             <div className="progress-bar" role="progressbar" style={style}> </div>
           </div>
-          <h2>Whack-A-Mole
-            <small className="pull-right">Score: {this.state.round.score}</small>
+          <h2 className="text-center">
+            Whack-A-Mole<br/>
+            <small style={{color: "green"}}> Score: {this.state.round.score} </small>
           </h2>
-        {display}
-        {button}
+          {display}
+          {button}
         </div>
         <div className="col-md-3"></div>
       </div>

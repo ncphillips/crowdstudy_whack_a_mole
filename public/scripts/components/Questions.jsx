@@ -16,12 +16,25 @@ var _questions = {
     "Do you feel like you performed well?",
     "How many times did you miss?",
     "How many times did you hit?"
+
+
+    // Feedback questions
+    //,"Did you perform as wellas the average worker?",
+    //"Did you perform as well as the elite workers?"
   ],
   other_feedback_questions: [
-    "How many times did you miss?",
-    "How many times did you hit?",
-    "What was your reaction time?",
-    "Has your reaction time improved?"
+    "Do you feel like you performed well this round?",
+    "How many times did you miss this round?",
+    "How many times did you hit this round?",
+    "What was your reaction time this round?",
+    "Has your reaction time improved?",
+    "How many times have you missed, on average ?",
+    "How many times have you hit, on average?",
+    "What was your reaction time this round?"
+
+    // Feedback questions
+    //,"Did you perform as wellas the average worker?",
+    //"Did you perform as well as the elite workers?"
   ]
 };
 

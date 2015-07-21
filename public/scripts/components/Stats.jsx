@@ -17,9 +17,10 @@ var TOOLTIPS = {
 
 var LABELS = {
   row: {
-    worker: "You",
-    average: "Avg.",
-    diff: "Difference"
+    workers_last: "Your Last Round",
+    workers_average: "Your Average Round",
+    elite_workers: "Elite Worker's Round",
+    average_workers: "Average Worker's Round"
   },
   col: {
     time: 'Time',
@@ -56,8 +57,8 @@ var StatsRow = React.createClass({
     return (
       <tr className={this.props.className}>
         <td><span data-toggle="tooltip" data-placement="left" title={this.props.tooltip}>{this.props.name}</span></td>
-        <td className={classes.time}>{Math.round(this.props.data.time / 10)/100} sec.</td>
-        <td className={classes.time_per_mole}>{Math.round(this.props.data.time_per_mole) / 1000} sec.</td>
+        <td className={classes.time}>{Math.round(this.props.data.time / 100)/10} sec.</td>
+        <td className={classes.time_per_mole}>{Math.round(this.props.data.time_per_mole / 10 ) / 100} sec.</td>
         <td className={classes.num_misses}>{Math.round(this.props.data.num_misses * 10)/10}</td>
         <td className={classes.num_hits}>{Math.round(this.props.data.num_hits * 10)/10}</td>
         <td className={classes.score}>{Math.round(this.props.data.score * 10)/10}</td>
@@ -73,29 +74,22 @@ var StatsRow = React.createClass({
 });
 var StatsView = React.createClass({
   render: function () {
-    var worker_stats = <StatsRow key={"worker"} name="Your Last Round" data={this.props.stats.last_block} tooltip={TOOLTIPS.row.you}/>;
+    var worker_stats = <StatsRow key={"worker"} name={LABELS.row.workers_last} data={this.props.stats.last_block} tooltip={TOOLTIPS.row.you}/>;
     var worker_avg_stats = null;
     if (this.props.stats.average_block) {
-      worker_avg_stats = <StatsRow key={"worker avg."} name="Your Average Round" data={this.props.stats.average_block} tooltip={TOOLTIPS.row.you}/>;
+      worker_avg_stats = <StatsRow key={"worker avg."} name={LABELS.row.workers_average} data={this.props.stats.average_block} tooltip={TOOLTIPS.row.you}/>;
     }
     var avg_worker_stats = null;
     var elite_worker_stats = null;
     var difference_of_stats = null;
 
     if (Object.getOwnPropertyNames(this.state.cstats).length > 1) {
-      avg_worker_stats = <StatsRow key={"average"} name="Avg. Worker's Round" data={this.state.cstats.population_average} tooltip={TOOLTIPS.row.average}/>;
-      elite_worker_stats = <StatsRow key={"elite"} name="Top Worker's Round" data={this.state.cstats.population_elite} tooltip={TOOLTIPS.row.average}/>;
-      //var difference = {
-      //  num_hits: this.props.stats.num_hits - this.state.cstats.num_hits,
-      //  num_misses: this.props.stats.num_misses - this.state.cstats.num_misses,
-      //  score: this.props.stats.score - this.state.cstats.score,
-      //  time_per_mole: this.props.stats.time_per_mole - this.state.cstats.time_per_mole
-      //};
-      //difference_of_stats = <StatsRow key={"diff"} name="Difference" data={difference} tooltip={TOOLTIPS.row.difference} colorCells={true}/>;
+      avg_worker_stats = <StatsRow key={"average"}name={LABELS.row.average_worker} data={this.state.cstats.population_average} tooltip={TOOLTIPS.row.average}/>;
+      elite_worker_stats = <StatsRow key={"elite"} name={LABELS.row.elite_worker} data={this.state.cstats.population_elite} tooltip={TOOLTIPS.row.average}/>;
     }
     return (
       <div>
-        <h2>Feedback</h2>
+        <h3>Feedback</h3>
         <table className="table">
           <thead>
             <tr>
