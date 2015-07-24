@@ -84,8 +84,8 @@ var StatsView = React.createClass({
     var difference_of_stats = null;
 
     if (Object.getOwnPropertyNames(this.state.cstats).length > 1) {
-      avg_worker_stats = <StatsRow key={"average"}name={LABELS.row.average_worker} data={this.state.cstats.population_average} tooltip={TOOLTIPS.row.average}/>;
-      elite_worker_stats = <StatsRow key={"elite"} name={LABELS.row.elite_worker} data={this.state.cstats.population_elite} tooltip={TOOLTIPS.row.average}/>;
+      avg_worker_stats = <StatsRow key={"average"}name={LABELS.row.average_workers} data={this.state.cstats.population_average} tooltip={TOOLTIPS.row.average}/>;
+      elite_worker_stats = <StatsRow key={"elite"} name={LABELS.row.elite_workers} data={this.state.cstats.population_elite} tooltip={TOOLTIPS.row.average}/>;
     }
     return (
       <div>

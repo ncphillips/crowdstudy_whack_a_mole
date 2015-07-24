@@ -19,7 +19,7 @@ var statsandstones = (function () {
           if (!result.hasOwnProperty(name)){
             result[name] = 0;
           }
-          result[name] += parseInt(stat[name]) || 0;
+          result[name] += parseFloat(stat[name]) || 0;
         }
       }
     });
@@ -162,7 +162,7 @@ var wamstats = (function () {
       return generateAverageBlockStats(worker.experiments.whack_a_mole.data.blocks);
     });
     var elite_workers = statsandstones.sortStats(worker_average_stats, 'rank');
-    var elite_worker_stats = elite_workers.splice(0, n)
+    var elite_worker_stats = elite_workers.splice(0, n);
     return statsandstones.aggregateStats(elite_worker_stats);
   }
 
@@ -171,8 +171,9 @@ var wamstats = (function () {
       return generateAverageBlockStats(worker.experiments.whack_a_mole.data.blocks);
     });
 
-    return statsandstones.aggregateStats(worker_average_stats);
-
+    var a = statsandstones.aggregateStats(worker_average_stats);
+    console.log("a",a.num_misses);
+    return a;
   }
 
   return {

@@ -34,23 +34,19 @@ module.exports.hook_worker_registration = function (req, res, next) {
 
 module.exports.generate_stats = function (req, res, next) {
   req.stats = {};
-  switch (req.experiment.feedback_type) {
-    case config.NONE:
-      real_stats(req, res, next);
-      break;
-    case config.REAL:
-      real_stats(req, res, next);
-      break;
-    case config.FAKE:
-      fake_stats(req, res, next);
-      break;
-    default:
+  var workers = req.db.collection('workers');
+  workers.find({"experiments.whack_a_mole.completed": {$in: [true, 'true']}}, function (err, workers) {
+    if (err) {
+      return next(err);
+    }
+    else if (workers.length < 1) {
       next();
-      break;
-  }
+    }
+    else {
+      real_stats(req, res, next);
+    }
+  });
 };
-
-
 
 var real_stats = function (req, res, next) {
   var wamstats = require('./public/scripts/lib/wamstats');
@@ -71,8 +67,30 @@ var real_stats = function (req, res, next) {
 exports.real_stats = real_stats;
 
 var fake_stats = function (req, res, next) {
-  next();
+  real_stats(req, res, function () {
+    console.log(req.stats);
+    var a = req.stats.population_average;
+    var p = req.stats.population_elite;
+
+    var modifier = 0.5;
+
+    a.time = a.time * modifier;
+    a.time_per_mole = a.time_per_mole * modifier;
+    a.num_hits = a.num_hits + (a.num_misses * (1 - modifier));
+    a.num_misses = a.num_misses * modifier;
+    a.score = a.num_hits - a.num_misses;
+
+    p.time = p.time * modifier;
+    p.time_per_mole = p.time_per_mole * modifier;
+    p.num_hits = p.num_hits + (p.num_misses * (1 - modifier));
+    p.num_misses = p.num_misses * modifier;
+    p.score = p.num_hits - p.num_misses;
+
+    next();
+  });
+
 };
+
 exports.fake_stats = fake_stats;
 
 exports.returnStats = function (req, res) {
