@@ -19,7 +19,7 @@ var LABELS = {
   row: {
     workers_last: "Your Last Round",
     workers_average: "Your Average Round",
-    elite_workers: "Elite Worker's Round",
+    elite_workers: "Expert Worker's Round",
     average_workers: "Average Worker's Round"
   },
   col: {

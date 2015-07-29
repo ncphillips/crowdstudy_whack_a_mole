@@ -23,14 +23,14 @@ var _questions = {
     //"Did you perform as well as the elite workers?"
   ],
   other_feedback_questions: [
-    "Do you feel like you performed well this round?",
-    "How many times did you miss this round?",
-    "How many times did you hit this round?",
-    "What was your reaction time this round?",
+    "Do you feel like you performed well last round?",
+    "How many times did you miss last round?",
+    "How many times did you hit last round?",
+    "What was your reaction time last round?",
     "Has your reaction time improved?",
     "How many times have you missed, on average ?",
     "How many times have you hit, on average?",
-    "What was your reaction time this round?"
+    "What was your reaction time last round?"
 
     // Feedback questions
     //,"Did you perform as wellas the average worker?",
@@ -76,7 +76,7 @@ var Questions = React.createClass({
 
     return (
         <div>
-          <p>Please look at your feedback table above carefully, and answer the questions below to complete this round.</p>
+          <h4>Please look at your feedback table above carefully, and answer the questions below to complete this round.</h4>
           {questions}
           <input type="button" className="btn btn-block btn-default" value={buttonText} disabled={buttonDisabled} onClick={this.saveAnswer}/>
           {errorMessage}

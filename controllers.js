@@ -57,10 +57,11 @@ var real_stats = function (req, res, next) {
     } else if (workers.length < 1) {
       return next();
     }
-    req.stats = {
-      population_average: wamstats.wamstats.generatePopulationAverageStats(workers),
-      population_elite: wamstats.wamstats.generatePopulationEliteStats(workers)
-    };
+    // Only works if called twice for some reason....it work, don't know why...
+    req.stats.population_average = wamstats.wamstats.generatePopulationAverageStats(workers);
+    req.stats.population_average = wamstats.wamstats.generatePopulationAverageStats(workers);
+
+    req.stats.population_elite = wamstats.wamstats.generatePopulationEliteStats(workers);
     next();
   });
 };
@@ -91,7 +92,7 @@ var fake_stats = function (req, res, next) {
 
 };
 
-exports.fake_stats = fake_stats;
+
 
 exports.returnStats = function (req, res) {
   res.json(req.stats);
