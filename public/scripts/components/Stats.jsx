@@ -89,7 +89,7 @@ var StatsView = React.createClass({
     }
     return (
       <div>
-        <h3>Feedback</h3>
+        <h3>Feedback Table</h3>
         <table className="table">
           <thead>
             <tr>
@@ -111,9 +111,18 @@ var StatsView = React.createClass({
             {difference_of_stats}
           </tfoot>
         </table>
-        <Questions callback={this.props.callback}/>
+        <Questions callback={this._handleQuestions}/>
       </div>
     )
+  },
+  _handleQuestions: function (q) {
+    this.props.callback({
+      questions: q,
+      stats: {
+        worker: this.props.stats,
+        population: this.state.cstats,
+      }
+    });
   },
   componentDidMount: function () {
     $.ajax({
