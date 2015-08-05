@@ -85,7 +85,7 @@ var WhackAMoleApp = React.createClass({
           </div>
           <h2 className="text-center">
             Whack-A-Mole<br/>
-            <small style={{color: "green"}}> Score: {this.state.round.score || 0} </small>
+            <small style={{color: "green"}}> Score: {this.state.round.score || 0 } </small>
           </h2>
           {display}
           {button}
@@ -291,7 +291,7 @@ var WhackAMoleApp = React.createClass({
     }, this.startRound);
   },
   saveQuestion: function (q) {
-    var questions = this.state.questions;
+    var questions = this.state.questions || [];
     questions.push(q);
 
     this.setState({questions: questions}, this.whatDoNext);
@@ -322,7 +322,7 @@ var WhackAMoleApp = React.createClass({
   _exit: function () {
     var output = this._stats();
     output.blocks = this.state.blocks;
-    output.questions = this.state.questions;
+    output.stats_questions = this.state.questions;
 
     this.props.exit(output);
   }
