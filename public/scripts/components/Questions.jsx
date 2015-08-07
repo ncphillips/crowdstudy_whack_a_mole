@@ -11,30 +11,22 @@ var MIN_ANSWER_LENGTH = 1;
 var props = {
   is_first_feedback: true
 };
+
 var _questions = {
   first_feedback_questions: [
-    "Do you feel like you performed well?",
-    "How many times did you miss?",
-    "How many times did you hit?"
-
-
-    // Feedback questions
-    //,"Did you perform as wellas the average worker?",
-    //"Did you perform as well as the elite workers?"
+    "Last round, how many times did you miss?",
+    "Last round, what was your time/mole?",
+    "Last round, what was your score?",
+    "Last round, do you feel like you performed well?"
   ],
   other_feedback_questions: [
-    "Do you feel like you performed well last round?",
-    "How many times did you miss last round?",
-    "How many times did you hit last round?",
-    "What was your reaction time last round?",
-    "Has your reaction time improved?",
-    "How many times have you missed, on average ?",
-    "How many times have you hit, on average?",
-    "What was your reaction time last round?"
-
-    // Feedback questions
-    //,"Did you perform as wellas the average worker?",
-    //"Did you perform as well as the elite workers?"
+    "Last round, were you faster than the Average worker?",
+    "Last round, were you faster than the Expert worker?", 
+    "Last round, did you miss fewer times than the Average worker?",
+    "Last round, did you miss fewer times than the Expert worker?",
+    "Last round, was your score better than the Average worker?",
+    "Last round, was your score better than the Expert worker?",
+    "Last round, do you feel like you performed well?"
   ]
 };
 
@@ -77,6 +69,7 @@ var Questions = React.createClass({
     return (
         <div>
           <h4>Please look at your feedback table above carefully, and answer the questions below to complete this round.</h4>
+        <h5>Remeber we will be evaluating the accuracy of your answers before rewarding your bonus, so please answer accurately and honestly.</h5>
           {questions}
           <input type="button" className="btn btn-block btn-default" value={buttonText} disabled={buttonDisabled} onClick={this.saveAnswer}/>
           {errorMessage}
