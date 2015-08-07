@@ -6,8 +6,10 @@ var Instructions = React.createClass({
   render: function () {
     return (
       <div>
-        <p>You have {this.props.rounds} chances to whack a mole!</p>
-        <p>Every {this.props.interval} rounds you will be given feedback on your performance.</p>
+        <p>Each round you have {this.props.rounds} chances to whack a mole!</p>
+        <p>After every {this.props.interval} moles you will receive feedback and be asked some questions. Please answer these accurately and truthfully as you can. Your answers will be verified before your bonus is awarded.</p>
+        <p>Your goal is to click the moles as quickly and accurately as possible!</p>
+        <p>The game scoring works in the following way:</p>
         <ul>
           <li>{this.props.hit} points for every mole whacked!</li>
           <li>{this.props.miss} points for each whack that misses!</li>
