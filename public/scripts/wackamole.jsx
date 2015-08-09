@@ -58,7 +58,7 @@ var WhackAMoleApp = React.createClass({
         display = (<Instructions rounds={WAIT_TIMES.length} interval={this.props.settings.wait_times.length} hit={HIT} miss={MISS} down={DOWN}/>);
         break;
       case 'stats':
-        display = (<StatsView worker={this.props.worker} round={this.state.round.number} stats={this._stats()} callback={this.saveQuestion} />);
+        display = (<StatsView worker={this.props.worker} block={this.state.block} stats={this._stats()} callback={this.saveQuestion} />);
         break;
       case 'game':
         var dim = this.props.settings.dimensions;

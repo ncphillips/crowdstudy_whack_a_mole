@@ -111,7 +111,7 @@ var StatsView = React.createClass({
             {difference_of_stats}
           </tfoot>
         </table>
-        <Questions callback={this._handleQuestions}/>
+        <Questions callback={this._handleQuestions} is_first_feedback={this.props.block<=1}/>
       </div>
     )
   },
