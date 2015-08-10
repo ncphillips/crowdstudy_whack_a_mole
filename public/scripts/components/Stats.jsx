@@ -77,7 +77,7 @@ var StatsView = React.createClass({
     var worker_stats = <StatsRow key={"worker"} name={LABELS.row.workers_last} data={this.props.stats.last_block} tooltip={TOOLTIPS.row.you}/>;
     var worker_avg_stats = null;
     if (this.props.stats.average_block) {
-      worker_avg_stats = <StatsRow key={"worker avg."} name={LABELS.row.workers_average} data={this.props.stats.average_block} tooltip={TOOLTIPS.row.you}/>;
+      //worker_avg_stats = <StatsRow key={"worker avg."} name={LABELS.row.workers_average} data={this.props.stats.average_block} tooltip={TOOLTIPS.row.you}/>;
     }
     var avg_worker_stats = null;
     var elite_worker_stats = null;
