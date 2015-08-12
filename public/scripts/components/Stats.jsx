@@ -83,7 +83,7 @@ var StatsView = React.createClass({
     var elite_worker_stats = null;
     var difference_of_stats = null;
 
-    if (Object.getOwnPropertyNames(this.state.cstats).length > 1) {
+    if (this.props.block > 2 && Object.getOwnPropertyNames(this.state.cstats).length > 1) {
       avg_worker_stats = <StatsRow key={"average"}name={LABELS.row.average_workers} data={this.state.cstats.population_average} tooltip={TOOLTIPS.row.average}/>;
       elite_worker_stats = <StatsRow key={"elite"} name={LABELS.row.elite_workers} data={this.state.cstats.population_elite} tooltip={TOOLTIPS.row.average}/>;
     }
@@ -111,7 +111,7 @@ var StatsView = React.createClass({
             {difference_of_stats}
           </tfoot>
         </table>
-        <Questions callback={this._handleQuestions} is_first_feedback={this.props.block<=1}/>
+        <Questions callback={this._handleQuestions} is_first_feedback={this.props.block<=2}/>
       </div>
     )
   },

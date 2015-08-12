@@ -155,25 +155,23 @@ var wamstats = (function () {
     return statsandstones.aggregateStats(block_stats);
   }
 
-  function generatePopulationEliteStats(workers) {
+  function generatePopulationEliteStats(workers, block_num) {
     // Get the aggregated stats object for  a worker.
     var n = Math.ceil(workers.length * 0.15) || 1;
     var worker_average_stats = workers.map(function (worker) {
-      return generateAverageBlockStats(worker.experiments.whack_a_mole.data.blocks);
+      return generateBlockStats(worker.experiments.whack_a_mole.blocks[block_num]);
     });
     var elite_workers = statsandstones.sortStats(worker_average_stats, 'rank');
     var elite_worker_stats = elite_workers.splice(0, n);
     return statsandstones.aggregateStats(elite_worker_stats);
   }
 
-  function generatePopulationAverageStats(workers) {
+  function generatePopulationAverageStats(workers, block_num) {
     var worker_average_stats = workers.map(function (worker) {
-      return generateAverageBlockStats(worker.experiments.whack_a_mole.data.blocks);
+      return generateBlockStats(worker.experiments.whack_a_mole.blocks[block_num]);
     });
 
-    var a = statsandstones.aggregateStats(worker_average_stats);
-    console.log("a",a.num_misses);
-    return a;
+    return statsandstones.aggregateStats(worker_average_stats);
   }
 
   return {
