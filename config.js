@@ -7,7 +7,7 @@ var constants = {
 };
 
 var config = {
-  feedback_type: constants.FAKE_WORKER_IS_BETTER,
+  feedback_type: constants.NONE,
   stats_query: {
     "experiments.whack_a_mole.feedback_type": constants.NONE,
     "experiments.whack_a_mole": { $exists: true },
