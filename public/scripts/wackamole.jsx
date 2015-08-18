@@ -140,9 +140,11 @@ var WhackAMoleApp = React.createClass({
   startGame: function () {
     if (this.state.fullscreen){
       // Create a new Block.
+      ExperimentStore.get().blocks.push([]);
+
+      // Update State
       var state= this.state;
       state.view = 'game';
-      state.blocks.push([]);
       state.round = {
         number: -1,
         score: 0, // moleHit, moleMiss, moleDown
@@ -266,7 +268,7 @@ var WhackAMoleApp = React.createClass({
    */
   endRound: function () {
     var round = this.state.round;
-    var blocks = this.state.blocks;
+    var blocks = ExperimentStore.get().blocks;
     var d = {
       block: this.state.block,
       number: round.number,
@@ -286,9 +288,7 @@ var WhackAMoleApp = React.createClass({
     // Push round data onto last block
     blocks[this.state.block][round.number] = d;
 
-    this.setState({
-      blocks: blocks
-    }, this.startRound);
+    this.startRound();
   },
   saveQuestion: function (q) {
     var questions = this.state.questions || [];
@@ -304,24 +304,31 @@ var WhackAMoleApp = React.createClass({
     }
   },
   endBlock: function () {
-    this.setState({view: 'stats', block: this.state.block+1});
+    var worker = WorkerStore.get();
+    var experiment = ExperimentStore.get();
+    ExperimentActions.update(worker._id, 'whack_a_mole', experiment);
+    var _this = this;
+    setTimeout(function () {
+      _this.setState({view: 'stats', block: _this.state.block+1});
+    }, 500);
+
   },
   _stats: function () {
     var n = this.state.block;
     var blocks = [];
-    for (var i=0; i < this.state.blocks.length - 1; i++) {
-      blocks.push(this.state.blocks[i]);
+    var eblocks = ExperimentStore.get().blocks;
+    for (var i=0; i < eblocks.length - 1; i++) {
+      blocks.push(eblocks[i]);
     }
-    var last_block = this.state.blocks[this.state.blocks.length - 1];
+    var last_block = eblocks[eblocks.length - 1];
 
     var last_block_stats = wamstats.generateBlockStats(last_block);
-    var average_block_stats = n > 1 ? wamstats.generateAverageStats(blocks) : null;
+    var average_block_stats = n > 2 ? wamstats.generateAverageStats(blocks) : null;
 
     return {last_block: last_block_stats, average_block: average_block_stats};
   },
   _exit: function () {
     var output = this._stats();
-    output.blocks = this.state.blocks;
     output.stats_questions = this.state.questions;
 
     this.props.exit(output);
