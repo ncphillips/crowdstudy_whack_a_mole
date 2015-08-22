@@ -42,7 +42,7 @@ module.exports = {
     next();
   },
   fake_worse: function (req, res, next) {
-    var w = wamstats.wamstats.generateBlockStats(req.experiments.blocks[req.block_num]);
+    var w = wamstats.wamstats.generateBlockStats(req.experiment.blocks[req.block_num]);
 
     var avg_modifier = config.fake_stats_modifiers.worse.avg;
     var elite_modifier = config.fake_stats_modifiers.worse.elite;
