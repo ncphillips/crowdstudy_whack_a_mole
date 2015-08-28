@@ -179,6 +179,7 @@ var WhackAMoleApp = React.createClass({
     }
     else {
       new_state.round.number = next_round;
+      new_state.hitting = false;
       this.setState(new_state, this.moleBurrow);
     }
   },
@@ -236,11 +237,13 @@ var WhackAMoleApp = React.createClass({
    * @param e
    */
   moleHit: function (e) {
+    if (this.state.hitting) return null;
     if (this.state.round.timeout_id) {
       clearTimeout(this.state.round.timeout_id);
     }
     var mole = document.getElementsByClassName('mole-patch')[0];
     var state = this.state;
+    state.hitting = true;
     state.round.score = this.state.round.score + HIT;
     state.round.hit = true;
     state.round.mole_rect = mole.getClientRects()[0];
@@ -286,15 +289,20 @@ var WhackAMoleApp = React.createClass({
     };
 
     // Push round data onto last block
+    if (blocks.length - 1 < this.state.block) {
+      blocks.push([])
+    }
     blocks[this.state.block][round.number] = d;
 
     this.startRound();
   },
   saveQuestion: function (q) {
+    var worker = WorkerStore.get();
+    var experiment = ExperimentStore.get();
     var questions = this.state.questions || [];
     questions.push(q);
-
-    this.setState({questions: questions}, this.whatDoNext);
+    experiment.stats_questions = questions;
+    ExperimentActions.update(worker._id, 'whack_a_mole', experiment);
   },
   whatDoNext: function () {
     if (this.state.block >= this.props.settings.num_blocks) {
@@ -304,12 +312,14 @@ var WhackAMoleApp = React.createClass({
     }
   },
   endBlock: function () {
+    if(this.state.block_ending) return null;
+    this.setState({block_ending: true});
     var worker = WorkerStore.get();
     var experiment = ExperimentStore.get();
     ExperimentActions.update(worker._id, 'whack_a_mole', experiment);
     var _this = this;
     setTimeout(function () {
-      _this.setState({view: 'stats', block: _this.state.block+1});
+      _this.setState({block_ending: false, view: 'stats', block: _this.state.block+1});
     }, 500);
 
   },
@@ -328,10 +338,7 @@ var WhackAMoleApp = React.createClass({
     return {last_block: last_block_stats, average_block: average_block_stats};
   },
   _exit: function () {
-    var output = this._stats();
-    output.stats_questions = this.state.questions;
 
-    this.props.exit(output);
   }
 });
 
